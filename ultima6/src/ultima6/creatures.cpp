@@ -120,6 +120,86 @@ void Creatures::hatch(int egg, int hour) {
 	const World::Obj &e = _world.objects[egg];
 	int quality = e.quality;
 	bool daytime = hour >= 6 && hour < 19;
+	if (_world.game == GameId::SavageEmpire) { // the egg of sub_36B67: looked at once (then used up and unseen: the bits 0x40 and 2); a roll of 1-100 must not be above its quantity; what it holds
+		// hatches by the kind: the bamboo 0x7F and 0xCB 10-20 each (their strength 5); a 0x143 one when the story is at flag 8 of actor 1 (else 5-15 on level 1, or as many as it holds); the people
+		// 0x136-0x146, 0x12D and 0x11A a roll of 1 to the count when the egg's quantity is 100 or less; the rest one; the creatures (type from 0x11A) are made next to the egg, with the worktype 8 when
+		// they have a side, else 0x8F; the things on a square within three of it that is not impassable terrain (the first of them stays whatever the place, the later ones only if they are on a
+		// good square); a hostile creature that hatched says "You hear something to the <direction>!"
+		if (e.status & 0x40)
+			return;
+		_world.objects[egg].status |= 0x42;
+		if ((int)(_rng.next() % 100) + 1 > e.quantity)
+			return;
+		const bool story = (_world.actors.talkFlags[1] & 8) != 0;
+		bool heard = false, first = true;
+		int mask = e.z == 0 ? 0x3FF : 0xFF;
+		for (size_t i = 0; i < _world.objects.size(); ++i) {
+			const World::Obj o = _world.objects[i];
+			if (o.deleted || o.location() != ObjRecord::IN_CONTAINER || o.parent != egg)
+				continue;
+			int type = o.type, count = o.quantity;
+			if (type == 0x7F || type == 0xCB)
+				count = 10 + (int)(_rng.next() % 11);
+			else if (type == 0x143)
+				count = story ? 1 : e.z == 1 ? 5 + (int)(_rng.next() % 11) : count;
+			else if ((type == 0x12D || type == 0x11A || (type >= 0x136 && type <= 0x146)) && e.quantity <= 100)
+				count = 1 + (int)(_rng.next() % (count > 0 ? count : 1));
+			else
+				count = 1;
+			for (int n = 0; n < count; ++n) {
+				int made = -1;
+				if (type >= 0x11A) {
+					int actor = spawn(type, 0x8F, e.x, e.y, e.z);
+					if (actor < 0)
+						continue;
+					if (_world.actors.status[actor] & 0x20)
+						heard = true;
+					_world.actors.worktype[actor] = (_world.actors.status[actor] & 0x60) ? 8 : 0x8F;
+					made = _world.actorObject(actor);
+				} else {
+					bool stack = _world.isStackable(type);
+					int nx = e.x, ny = e.y;
+					if (type != 0xA7) {
+						nx = (e.x + (int)(_rng.next() % 6) - 3) & mask;
+						ny = (e.y + (int)(_rng.next() % 6) - 3) & mask;
+						if (_world.flags.flags1[_world.map.tile(e.z, nx, ny) & (TileFlags::TILES - 1)] & 6)
+							continue;
+					}
+					World::Obj t;
+					t.status = 0x20;
+					t.x = (uint16_t)nx;
+					t.y = (uint16_t)ny;
+					t.z = e.z;
+					t.type = (uint16_t)type;
+					t.frame = type == 0xA7 ? 3 : 0;
+					t.quantity = (uint8_t)((type == 0x7F || type == 0xCB) ? 5 : stack ? 1 : 0);
+					t.quality = 0;
+					t.actor = -1;
+					t.parent = -1;
+					_world.objects.push_back(t);
+					made = (int)_world.objects.size() - 1;
+					_world.addToMap(made);
+				}
+				(void)made;
+				first = false;
+			}
+		}
+		if (heard && !(dreaming && dreaming())) {
+			const World::Obj &eg = _world.objects[egg];
+			int dx = (int)eg.x - _eggPx, dy = (int)eg.y - _eggPy, ax = std::abs(dx), ay = std::abs(dy);
+			int dir;
+			if (ax >= 2 * ay)
+				dir = dx < 0 ? 6 : 2;
+			else if (ay >= 2 * ax)
+				dir = dy < 0 ? 0 : 4;
+			else
+				dir = dy < 0 ? (dx < 0 ? 7 : 1) : (dx < 0 ? 5 : 3);
+			static const char *const NAMES[8] = {"North", "Northeast", "East", "Southeast", "South", "Southwest", "West", "Northwest"};
+			_scroll.print(std::string("You hear something to the ") + NAMES[dir] + "!\n");
+		}
+		(void)first;
+		return;
+	}
 	if (_world.game == GameId::MartianDreams) { // sub_2662B: an egg is looked at once (afterwards it is used up and unseen, the bits 0x40 and 2); the tens of its quality say when it hatches (0 always, 1 from
 		// 6 to 17 o'clock, 2 at night, more never, and so no quality of 100 or more), the roll of 1-100 must not be above its quantity
 		if (e.status & 0x40)

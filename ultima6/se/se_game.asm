@@ -20273,7 +20273,7 @@ loc_191AE:                              ; CODE XREF: sub_18FAA+181↑j
 ; ---------------------------------------------------------------------------
 
 loc_191B6:                              ; CODE XREF: sub_18FAA+207↑j
-                call    sub_36F50
+                call    check_eggs
 
 loc_191BB:                              ; CODE XREF: sub_18FAA+76↑j
                 mov     word_407A5, 1
@@ -20708,7 +20708,7 @@ arg_6           = word ptr  0Ch
                 push    cs
                 call    near ptr sub_191EA
                 mov     word_41DC0, 1
-                call    sub_36F50
+                call    check_eggs
                 mov     word_41DC0, 0
                 call    sub_1A0C7
                 call    sub_38E06
@@ -53153,7 +53153,7 @@ sub_2833B       endp
 
 ; Attributes: bp-based frame
 
-sub_28494       proc far                ; CODE XREF: sub_36B67+304↓P
+sub_28494       proc far                ; CODE XREF: egg_hatch+304↓P
 
 var_8           = word ptr -8
 var_6           = word ptr -6
@@ -65831,7 +65831,7 @@ var_2           = byte ptr -2
                 mov     al, byte_4695D
                 or      al, 80h
                 mov     byte_4695D, al
-                call    sub_36F50
+                call    check_eggs
                 mov     al, byte_4695D
                 and     al, 7Fh
                 mov     byte_4695D, al
@@ -84588,7 +84588,7 @@ sub_367CD       endp ; sp-analysis failed
 
 ; Attributes: bp-based frame
 
-sub_36B67       proc far                ; CODE XREF: sub_36F50+B3↓p
+egg_hatch       proc far                ; CODE XREF: check_eggs+B3↓p
 
 var_22          = word ptr -22h
 var_20          = word ptr -20h
@@ -84623,7 +84623,7 @@ arg_0           = word ptr  6
                 jmp     loc_36F48
 ; ---------------------------------------------------------------------------
 
-loc_36B8B:                              ; CODE XREF: sub_36B67+1F↑j
+loc_36B8B:                              ; CODE XREF: egg_hatch+1F↑j
                 mov     ax, word_41DC0
                 neg     ax
                 sbb     ax, ax
@@ -84633,7 +84633,7 @@ loc_36B8B:                              ; CODE XREF: sub_36B67+1F↑j
                 jz      short loc_36BA2
                 mov     [bp+var_1C], 1
 
-loc_36BA2:                              ; CODE XREF: sub_36B67+34↑j
+loc_36BA2:                              ; CODE XREF: egg_hatch+34↑j
                 mov     al, [si+329Ch]
                 mov     ah, 0
                 test    ax, 40h
@@ -84641,7 +84641,7 @@ loc_36BA2:                              ; CODE XREF: sub_36B67+34↑j
                 jmp     loc_36F34
 ; ---------------------------------------------------------------------------
 
-loc_36BB0:                              ; CODE XREF: sub_36B67+44↑j
+loc_36BB0:                              ; CODE XREF: egg_hatch+44↑j
                 mov     ax, 1
                 push    ax
                 mov     ax, 64h ; 'd'
@@ -84656,7 +84656,7 @@ loc_36BB0:                              ; CODE XREF: sub_36B67+44↑j
                 jmp     loc_36F34
 ; ---------------------------------------------------------------------------
 
-loc_36BCE:                              ; CODE XREF: sub_36B67+62↑j
+loc_36BCE:                              ; CODE XREF: egg_hatch+62↑j
                 mov     [bp+var_16], 0
                 mov     [bp+var_18], 1
                 push    si
@@ -84664,7 +84664,7 @@ loc_36BCE:                              ; CODE XREF: sub_36B67+62↑j
                 jmp     loc_36E94
 ; ---------------------------------------------------------------------------
 
-loc_36BE1:                              ; CODE XREF: sub_36B67+336↓j
+loc_36BE1:                              ; CODE XREF: egg_hatch+336↓j
                 mov     bx, [bp+var_12]
                 shl     bx, 1
                 mov     ax, [bx-6306h]
@@ -84681,7 +84681,7 @@ loc_36BE1:                              ; CODE XREF: sub_36B67+336↓j
                 cmp     [bp+var_8], 0CBh
                 jnz     short loc_36C1E
 
-loc_36C0E:                              ; CODE XREF: sub_36B67+9E↑j
+loc_36C0E:                              ; CODE XREF: egg_hatch+9E↑j
                 mov     ax, 0Ah
                 push    ax
                 mov     ax, 14h
@@ -84689,18 +84689,18 @@ loc_36C0E:                              ; CODE XREF: sub_36B67+9E↑j
                 call    random_range
                 mov     [bp+var_A], ax
 
-loc_36C1E:                              ; CODE XREF: sub_36B67+A5↑j
+loc_36C1E:                              ; CODE XREF: egg_hatch+A5↑j
                 cmp     [bp+var_8], 143h
                 jnz     short loc_36C4B
                 cmp     [bp+var_1C], 0
                 jz      short loc_36C32
 
-loc_36C2B:                              ; CODE XREF: sub_36B67:loc_36C67↓j
+loc_36C2B:                              ; CODE XREF: egg_hatch:loc_36C67↓j
                 mov     [bp+var_A], 1
                 jmp     short loc_36C83
 ; ---------------------------------------------------------------------------
 
-loc_36C32:                              ; CODE XREF: sub_36B67+C2↑j
+loc_36C32:                              ; CODE XREF: egg_hatch+C2↑j
                 cmp     party_z, 1
                 jnz     short loc_36C83
                 mov     ax, 5
@@ -84712,7 +84712,7 @@ loc_36C32:                              ; CODE XREF: sub_36B67+C2↑j
                 jmp     short loc_36C83
 ; ---------------------------------------------------------------------------
 
-loc_36C4B:                              ; CODE XREF: sub_36B67+BC↑j
+loc_36C4B:                              ; CODE XREF: egg_hatch+BC↑j
                 cmp     [bp+var_8], 12Dh
                 jz      short loc_36C69
                 cmp     [bp+var_8], 11Ah
@@ -84722,12 +84722,12 @@ loc_36C4B:                              ; CODE XREF: sub_36B67+BC↑j
                 cmp     [bp+var_8], 146h
                 jle     short loc_36C69
 
-loc_36C67:                              ; CODE XREF: sub_36B67+F7↑j
+loc_36C67:                              ; CODE XREF: egg_hatch+F7↑j
                 jmp     short loc_36C2B
 ; ---------------------------------------------------------------------------
 
-loc_36C69:                              ; CODE XREF: sub_36B67+E9↑j
-                                        ; sub_36B67+F0↑j ...
+loc_36C69:                              ; CODE XREF: egg_hatch+E9↑j
+                                        ; egg_hatch+F0↑j ...
                 mov     bx, si
                 shl     bx, 1
                 cmp     byte ptr [bx+54F0h], 64h ; 'd'
@@ -84738,14 +84738,14 @@ loc_36C69:                              ; CODE XREF: sub_36B67+E9↑j
                 call    random_range
                 mov     [bp+var_A], ax
 
-loc_36C83:                              ; CODE XREF: sub_36B67+C9↑j
-                                        ; sub_36B67+D0↑j ...
+loc_36C83:                              ; CODE XREF: egg_hatch+C9↑j
+                                        ; egg_hatch+D0↑j ...
                 cmp     [bp+var_8], 7Fh
                 jz      short loc_36C90
                 cmp     [bp+var_8], 0CBh
                 jnz     short loc_36CA0
 
-loc_36C90:                              ; CODE XREF: sub_36B67+120↑j
+loc_36C90:                              ; CODE XREF: egg_hatch+120↑j
                 mov     ax, 0Ah
                 push    ax
                 mov     ax, 14h
@@ -84753,18 +84753,18 @@ loc_36C90:                              ; CODE XREF: sub_36B67+120↑j
                 call    random_range
                 mov     [bp+var_A], ax
 
-loc_36CA0:                              ; CODE XREF: sub_36B67+127↑j
+loc_36CA0:                              ; CODE XREF: egg_hatch+127↑j
                 mov     [bp+var_2], 0
                 jmp     loc_36E84
 ; ---------------------------------------------------------------------------
 
-loc_36CA8:                              ; CODE XREF: sub_36B67+325↓j
+loc_36CA8:                              ; CODE XREF: egg_hatch+325↓j
                 cmp     [bp+var_6], 11Ah
                 jl      short loc_36CB2
                 jmp     loc_36DFB
 ; ---------------------------------------------------------------------------
 
-loc_36CB2:                              ; CODE XREF: sub_36B67+146↑j
+loc_36CB2:                              ; CODE XREF: egg_hatch+146↑j
                 push    [bp+var_6]
                 call    quantity_kind
                 or      ax, ax
@@ -84773,10 +84773,10 @@ loc_36CB2:                              ; CODE XREF: sub_36B67+146↑j
                 jmp     short loc_36CCA
 ; ---------------------------------------------------------------------------
 
-loc_36CC5:                              ; CODE XREF: sub_36B67+155↑j
+loc_36CC5:                              ; CODE XREF: egg_hatch+155↑j
                 mov     [bp+var_4], 0
 
-loc_36CCA:                              ; CODE XREF: sub_36B67+15C↑j
+loc_36CCA:                              ; CODE XREF: egg_hatch+15C↑j
                 cmp     [bp+var_6], 0A7h
                 jnz     short loc_36D25
                 push    [bp+var_6]
@@ -84813,7 +84813,7 @@ loc_36CCA:                              ; CODE XREF: sub_36B67+15C↑j
                 jmp     loc_36DDF
 ; ---------------------------------------------------------------------------
 
-loc_36D25:                              ; CODE XREF: sub_36B67+168↑j
+loc_36D25:                              ; CODE XREF: egg_hatch+168↑j
                 xor     ax, ax
                 push    ax
                 mov     ax, 6
@@ -84885,8 +84885,8 @@ loc_36D25:                              ; CODE XREF: sub_36B67+168↑j
                 call    make_object
                 mov     di, ax
 
-loc_36DDF:                              ; CODE XREF: sub_36B67+1BB↑j
-                                        ; sub_36B67+219↑j ...
+loc_36DDF:                              ; CODE XREF: egg_hatch+1BB↑j
+                                        ; egg_hatch+219↑j ...
                 or      di, di
                 jl      short loc_36E5D
                 cmp     [bp+var_6], 7Fh
@@ -84894,14 +84894,14 @@ loc_36DDF:                              ; CODE XREF: sub_36B67+1BB↑j
                 cmp     [bp+var_6], 0CBh
                 jnz     short loc_36E5D
 
-loc_36DF0:                              ; CODE XREF: sub_36B67+280↑j
+loc_36DF0:                              ; CODE XREF: egg_hatch+280↑j
                 mov     bx, di
                 shl     bx, 1
                 mov     byte ptr [bx+54F0h], 5
                 jmp     short loc_36E5D
 ; ---------------------------------------------------------------------------
 
-loc_36DFB:                              ; CODE XREF: sub_36B67+148↑j
+loc_36DFB:                              ; CODE XREF: egg_hatch+148↑j
                 push    [bp+var_8]
                 mov     ax, si
                 mov     dx, 3
@@ -84929,7 +84929,7 @@ loc_36DFB:                              ; CODE XREF: sub_36B67+148↑j
                 jz      short loc_36E3E
                 mov     [bp+var_16], 1
 
-loc_36E3E:                              ; CODE XREF: sub_36B67+2D0↑j
+loc_36E3E:                              ; CODE XREF: egg_hatch+2D0↑j
                 test    byte ptr [di+6CF0h], 60h
                 jz      short loc_36E4D
                 les     bx, dword_44166
@@ -84937,17 +84937,17 @@ loc_36E3E:                              ; CODE XREF: sub_36B67+2D0↑j
                 jmp     short loc_36E53
 ; ---------------------------------------------------------------------------
 
-loc_36E4D:                              ; CODE XREF: sub_36B67+2DC↑j
+loc_36E4D:                              ; CODE XREF: egg_hatch+2DC↑j
                 les     bx, dword_44166
                 mov     al, 8Fh
 
-loc_36E53:                              ; CODE XREF: sub_36B67+2E4↑j
+loc_36E53:                              ; CODE XREF: egg_hatch+2E4↑j
                 mov     es:[bx+di], al
                 les     bx, dword_44E44
                 mov     es:[bx+di], al
 
-loc_36E5D:                              ; CODE XREF: sub_36B67+27A↑j
-                                        ; sub_36B67+287↑j ...
+loc_36E5D:                              ; CODE XREF: egg_hatch+27A↑j
+                                        ; egg_hatch+287↑j ...
                 or      di, di
                 jl      short loc_36E81
                 cmp     [bp+var_18], 0
@@ -84962,43 +84962,43 @@ loc_36E5D:                              ; CODE XREF: sub_36B67+27A↑j
                 jmp     short loc_36E81
 ; ---------------------------------------------------------------------------
 
-loc_36E7C:                              ; CODE XREF: sub_36B67+2FE↑j
+loc_36E7C:                              ; CODE XREF: egg_hatch+2FE↑j
                 mov     [bp+var_18], 0
 
-loc_36E81:                              ; CODE XREF: sub_36B67+2F8↑j
-                                        ; sub_36B67+30B↑j ...
+loc_36E81:                              ; CODE XREF: egg_hatch+2F8↑j
+                                        ; egg_hatch+30B↑j ...
                 inc     [bp+var_2]
 
-loc_36E84:                              ; CODE XREF: sub_36B67+13E↑j
+loc_36E84:                              ; CODE XREF: egg_hatch+13E↑j
                 mov     ax, [bp+var_2]
                 cmp     ax, [bp+var_A]
                 jge     short loc_36E8F
                 jmp     loc_36CA8
 ; ---------------------------------------------------------------------------
 
-loc_36E8F:                              ; CODE XREF: sub_36B67+323↑j
+loc_36E8F:                              ; CODE XREF: egg_hatch+323↑j
                 call    container_next
 
-loc_36E94:                              ; CODE XREF: sub_36B67+77↑j
+loc_36E94:                              ; CODE XREF: egg_hatch+77↑j
                 mov     [bp+var_12], ax
                 cmp     [bp+var_12], 0
                 jl      short loc_36EA0
                 jmp     loc_36BE1
 ; ---------------------------------------------------------------------------
 
-loc_36EA0:                              ; CODE XREF: sub_36B67+334↑j
+loc_36EA0:                              ; CODE XREF: egg_hatch+334↑j
                 cmp     word_407AB, 0
                 jz      short loc_36EAA
                 jmp     loc_36F34
 ; ---------------------------------------------------------------------------
 
-loc_36EAA:                              ; CODE XREF: sub_36B67+33E↑j
+loc_36EAA:                              ; CODE XREF: egg_hatch+33E↑j
                 cmp     [bp+var_16], 0
                 jnz     short loc_36EB3
                 jmp     loc_36F34
 ; ---------------------------------------------------------------------------
 
-loc_36EB3:                              ; CODE XREF: sub_36B67+347↑j
+loc_36EB3:                              ; CODE XREF: egg_hatch+347↑j
                 mov     ax, si
                 mov     dx, 3
                 imul    dx
@@ -85045,8 +85045,8 @@ loc_36EB3:                              ; CODE XREF: sub_36B67+347↑j
                 mov     byte_3FC63, 1
                 mov     word_407AB, 1
 
-loc_36F34:                              ; CODE XREF: sub_36B67+46↑j
-                                        ; sub_36B67+64↑j ...
+loc_36F34:                              ; CODE XREF: egg_hatch+46↑j
+                                        ; egg_hatch+64↑j ...
                 mov     al, [si+329Ch]
                 or      al, 40h
                 mov     [si+329Ch], al
@@ -85054,20 +85054,20 @@ loc_36F34:                              ; CODE XREF: sub_36B67+46↑j
                 or      al, 2
                 mov     [si+329Ch], al
 
-loc_36F48:                              ; CODE XREF: sub_36B67+21↑j
+loc_36F48:                              ; CODE XREF: egg_hatch+21↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf    2
-sub_36B67       endp
+egg_hatch       endp
 
 
 ; =============== S U B R O U T I N E =======================================
 
 ; Attributes: bp-based frame
 
-sub_36F50       proc far                ; CODE XREF: sub_18FAA:loc_191B6↑P
+check_eggs      proc far                ; CODE XREF: sub_18FAA:loc_191B6↑P
                                         ; sub_194AE+26↑P ...
 
 var_4           = word ptr -4
@@ -85083,7 +85083,7 @@ var_2           = word ptr -2
                 jmp     loc_37014
 ; ---------------------------------------------------------------------------
 
-loc_36F62:                              ; CODE XREF: sub_36F50+D↑j
+loc_36F62:                              ; CODE XREF: check_eggs+D↑j
                 mov     ax, word_4B55E
                 mov     [bp+var_2], ax
                 mov     di, word_4B560
@@ -85098,7 +85098,7 @@ loc_36F62:                              ; CODE XREF: sub_36F50+D↑j
                 jmp     loc_3700B
 ; ---------------------------------------------------------------------------
 
-loc_36F80:                              ; CODE XREF: sub_36F50+C1↓j
+loc_36F80:                              ; CODE XREF: check_eggs+C1↓j
                 mov     ax, si
                 mov     dx, 3
                 imul    dx
@@ -85149,31 +85149,31 @@ loc_36F80:                              ; CODE XREF: sub_36F50+C1↓j
                 cmp     ax, 8
                 jle     short loc_37006
 
-loc_37001:                              ; CODE XREF: sub_36F50+8A↑j
-                                        ; sub_36F50+9D↑j
+loc_37001:                              ; CODE XREF: check_eggs+8A↑j
+                                        ; check_eggs+9D↑j
                 push    si
                 push    cs
-                call    near ptr sub_36B67
+                call    near ptr egg_hatch
 
-loc_37006:                              ; CODE XREF: sub_36F50+6A↑j
-                                        ; sub_36F50+83↑j ...
+loc_37006:                              ; CODE XREF: check_eggs+6A↑j
+                                        ; check_eggs+83↑j ...
                 call    sub_1AE43
 
-loc_3700B:                              ; CODE XREF: sub_36F50+2D↑j
+loc_3700B:                              ; CODE XREF: check_eggs+2D↑j
                 mov     si, ax
                 or      si, si
                 jl      short loc_37014
                 jmp     loc_36F80
 ; ---------------------------------------------------------------------------
 
-loc_37014:                              ; CODE XREF: sub_36F50+F↑j
-                                        ; sub_36F50+BF↑j
+loc_37014:                              ; CODE XREF: check_eggs+F↑j
+                                        ; check_eggs+BF↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf
-sub_36F50       endp
+check_eggs      endp
 
 seg014          ends
 
@@ -85853,7 +85853,7 @@ sub_3746E       endp
 
 ; Attributes: bp-based frame
 
-sub_374B7       proc far                ; CODE XREF: sub_36B67+3A4↑P
+sub_374B7       proc far                ; CODE XREF: egg_hatch+3A4↑P
                 push    bp
                 mov     bp, sp
                 cmp     word_3FB34, 0

@@ -137,6 +137,8 @@ FUNCTIONS = [
     (0x28764, "become_corpse", 'what a dead (or sleeping) creature turns into, by the table at ds:0EA3'),
     (0x286F7, "add_experience", 'adds experience to an actor, up to 9999'),
     (0x2810D, "is_invulnerable", 'the kinds 0x126, 0x11F, 0x11E and the story people 0x1F, 0x2F, 0x37, 0x21, 0x0B, 0x19, 0x23 cannot be hurt'),
+    (0x36B67, "egg_hatch", 'an egg is looked at once; a roll against its quantity; what it holds is made by kind (the bamboo 10-20, the 0x143, the people)'),
+    (0x36F50, "check_eggs", 'the eggs round the party'),
     # -- matched by instruction signature (tools/match_functions.py) --
     (0x27169, "request_talk", '= Martian Dreams 29C22 (matched by instruction signature)'),
     (0x101AF, "__restorezero", '= Ultima VI 101B0 (matched by instruction signature)'),

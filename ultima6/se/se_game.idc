@@ -27188,6 +27188,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X36B5C);
 	op_stkvar	(x,	1);
 	create_insn	(0X36B67);
+	set_name	(0X36B67,	"egg_hatch");
 	create_insn	(x=0X36B6A);
 	op_hex		(x,	1);
 	create_insn	(x=0X36B6F);
@@ -27406,6 +27407,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X36F42);
 	op_hex		(x,	1);
 	create_insn	(0X36F50);
+	set_name	(0X36F50,	"check_eggs");
 	create_insn	(x=0X36F53);
 	op_hex		(x,	1);
 	create_insn	(0X36F62);
@@ -32090,10 +32092,6 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X3DE79);
 	op_hex		(x,	1);
-	create_insn	(x=0X3DE7C);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X3DE7F);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -32103,6 +32101,10 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X3DE7C);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X3DE7F);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X3DE82);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3DE85);
