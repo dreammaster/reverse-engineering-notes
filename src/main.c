@@ -2680,6 +2680,15 @@ int main(int argc, char **argv) {
 						if (g_savemode) savemode_key(kc); else if (kc == SDLK_s || kc == SDLK_l) savemode_start(kc == SDLK_s);
 					}
 					if (!strncmp(c, "dump:", 5)) { fprintf(stderr, "DUMP %d %d %d %d\n", g_walk.x1, g_walk.y1, g_walk.z, g_room.room); if (getenv("CAD_DUMPBOX")) for (int bi = 0; bi < g_room.ro.n; bi++) { const RoomObj *bo = &g_room.ro.o[bi]; fprintf(stderr, "OBJ %d %d %d %d %d %d %d %d\n", bo->thing, bo->cx1, bo->cy1, bo->cx0, bo->cy0, bo->czt, bo->czb, bo->sp->header[22]); }   /* debugging aid: print the player position */ }
+					if (!strncmp(c, "state:", 6)) {                          /* debugging aid: the game state that a saved game carries (compared with the original by tools/verify_origsave.py) */
+						fprintf(stderr, "STATE money %u score %u energy %d day %d held %d carried", g_room.vm.money, g_room.vm.score, g_room.vm.energy, g_room.day, g_room.held);
+						for (int t = 0; t < ACL_THINGS; t++) if (g_room.vm.present[t] && g_room.vm.room[t] == 0xFF && !(g_room.vm.flags[t] & 0x80)) fprintf(stderr, " %d", t);
+						fprintf(stderr, " locks");
+						for (int d = 0; d < 400; d++) if (g_room.vm.doorw[d]) fprintf(stderr, " %d=%04x", d, g_room.vm.doorw[d]);
+						fprintf(stderr, " timers");
+						for (int e = 0; e < 0x34; e++) if (g_room.vm.g[0x81 + 0x1A + e]) fprintf(stderr, " %d=%d", e, g_room.vm.g[0x81 + 0x1A + e]);
+						fprintf(stderr, "\n");
+					}
 					if (!strncmp(c, "money:", 6)) g_room.vm.money = (uint32_t)atoi(c + 6);
 					if (!strncmp(c, "tp:", 3)) { int tx = 0, ty = 0, tz = 0; if (sscanf(c + 3, "%d:%d:%d", &tx, &ty, &tz) >= 2) { g_walk.x1 = tx; g_walk.y1 = ty; g_walk.z = tz; } }   /* debugging aid: put the player at x, y (z) */
 					if (!strncmp(c, "unlock:", 7)) { int d = atoi(c + 7); if (d >= 0 && d < 400) g_room.vm.doorw[d] = 0; else if (d < 0) memset(g_room.vm.doorw, 0, sizeof(g_room.vm.doorw)); }   /* debugging aid: clear the lock word of door d */

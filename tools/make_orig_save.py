@@ -18,9 +18,24 @@ subprocess.run(['cp', '-rs', os.path.join(ROOT, GAME) + '/.', tmp], check=True)
 e = Emu(ROOT + ('/unpacked/cadaver2/GAME.EXE' if PAY else '/unpacked/cadaver1/CAD.EXE'), tmp)
 e.pending_keys = [0x0231, 0x1970] if PAY else [0x0231, 0x011b]
 if LV != 1 and not PAY: e.uc.hook_add(UC_HOOK_CODE, lambda uc, a, sz, u: e.wr(0x1F17, 0x708, bytes([LV - 1])), None, e.lin(0x1000, 0xC4CB), e.lin(0x1000, 0xC4CB))
+def capture():                                      # the state at the moment the game creates the file (the price is paid, nothing has run since)
+    rw = lambda o: struct.unpack('<H', bytes(e.uc.mem_read(DS + o, 2)))[0]
+    def rec_ptrs(sec):                                  # the records of a section: ds:3E + 16 * sec -> index table [+2] and data base [+6]
+        di = rw(0x3e) + 16 * sec
+        idx = rw(di + 2); base = rw(di + 6); cnt = rw(di + 0x0E)
+        for t in range(cnt):
+            ln, off = struct.unpack('<HH', bytes(e.uc.mem_read(DS + idx + 4 * t, 4)))
+            yield t, base + off, ln
+    carried = [t for t, a, ln in rec_ptrs(6) if ln >= 16 and e.uc.mem_read(DS + a + 10, 1)[0] == 0xFF and not e.uc.mem_read(DS + a + 3, 1)[0] & 0x80]
+    locks = {t: (e.uc.mem_read(DS + a + 2, 1)[0] << 8) | e.uc.mem_read(DS + a + 3, 1)[0] for t, a, ln in rec_ptrs(4) if ln >= 4}
+    locks = {k: v for k, v in locks.items() if v}
+    timers = {k: e.uc.mem_read(DS + 0x62B + k, 1)[0] for k in range(0x34) if e.uc.mem_read(DS + 0x62B + k, 1)[0]}
+    extra = {'money': rw(0x248) | rw(0x24A) << 16, 'score': rw(0x24C) | rw(0x24E) << 16, 'energy': rw(0x23a), 'held': rw(0x27a), 'day': e.uc.mem_read(DS + 0x5B2, 1)[0], 'carried': carried, 'locks': locks, 'timers': timers}
+    return extra
+captured = []
 opened = []
 orig = e.on_open
-e.on_open = lambda h, dn, hp: (opened.append(hp), orig(h, dn, hp))
+e.on_open = lambda h, dn, hp: (opened.append(hp), captured.append(capture()) if os.path.basename(hp).upper().startswith('SAVE.SAV') else None, orig(h, dn, hp))
 armed = [False]                                   # 1000:C1AB is the restore prompt at start-up as well: only fake it for the save
 def fake_prompt(uc, a, sz, u):
     if not armed[0]: return                    # 1000:C1AB (Payoff C810), the slot prompt: file name 'SAVE.SAV' + slot digit, slot 1, ZF clear
@@ -40,6 +55,8 @@ t0 = nstep[0]
 while nstep[0] - t0 < 6: e.run(max_instr=2000, slice_instr=2000)         # a few game steps: the room is entered and the entries exist
 for k, n in walk:
     e.scan_queue.append(KEY[k]); run(int(n)); e.scan_queue.append(KEY[k] | 0x80); run(6)
+if os.environ.get('TIMER'):                       # TIMER=effect:value: an effect timer (ds:62B + effect) is running when the game is saved
+    te, tv = map(int, os.environ['TIMER'].split(':')); e.wr(DSEG, 0x62B + te, bytes([tv])); e.wr(DSEG, 0x62A, bytes([1]))
 e.wr(DSEG, 0x248, struct.pack('<H', 1000))
 rw = lambda o: struct.unpack('<H', bytes(e.uc.mem_read(DS + o, 2)))[0]
 pr = rw(0x5c); sl = rw(0x2a)
@@ -52,5 +69,6 @@ if not any(os.path.basename(o).upper().startswith('SAVE.SAV') for o in opened):
 saves = [o for o in opened if os.path.basename(o).upper().startswith('SAVE.SAV')]      # SAVE.SAV or SAVE.SAV1
 if not saves: sys.exit('no save file among the opened files: %s' % opened[-3:])
 shutil.copy(saves[-1], out)
+state['extra'] = captured[-1]
 shutil.rmtree(tmp, ignore_errors=True)
 print('STATE', json.dumps(state))
