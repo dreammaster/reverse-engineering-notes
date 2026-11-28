@@ -468,7 +468,9 @@ private:
 	void seGroup(int code);                                                     // sub_229F8
 	void seAid(int member);                                                     // sub_2259E
 	void seLook(int idx, const std::string &name);                              // sub_2EE8D: what the look at a thing says in Savage Empire
-	void seGetAt(int tx, int ty);                                              // sub_2FBBA: Get in Savage Empire
+	void seGemScene();                                                         // sub_2DD70
+	void seMoveItemTo(int tx, int ty);                                         // sub_302B8 (cmd_move): where a thing of the pack is moved to
+	void seGetAt(int tx, int ty);                                             // sub_2FBBA: Get in Savage Empire
 	int sePickUp(int idx, int actor);                                          // sub_1C4AB: a thing with what it holds goes into a pack (its new index)
 	void seStepOn();                                                            // sub_254F4: the ladders and stairs of Savage Empire
 	void seClimb(int idx);                                                      // sub_19505 for ropes and holes

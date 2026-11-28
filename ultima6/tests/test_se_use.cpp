@@ -1075,6 +1075,38 @@ int main() {
 		CHECK(got);
 	}
 
+	// Move from the pack (sub_302B8): the target is chosen with the cursor; the stand (0x42) takes the thing up and to its left, the day goes on to noon and the way down is opened
+	{
+		w.moveObject(w.actorObject(1), px, py, 0);
+		g.x = px;
+		g.y = py;
+		g.z = 0;
+		clearEast(w, px, py);
+		std::vector<int> pack;
+		w.inventory(1, pack, false);
+		for (int i : pack)
+			w.deleteObject(i);
+		int item = w.addToInventory(1, 0x20, 0, 1);
+		int stand = put(w, 0x42, 0, px + 1, py, 0);
+		w.actors.talkFlags[1] &= 0xFD;
+		g.gameClock.hour = 9;
+		g.log.clear();
+		g.handleKey('i');
+		g.handleKey('m');
+		g.handleKey(KEY_RIGHT);
+		g.handleKey(KEY_ENTER);
+		CHECK(logText(g).find("You place the gem on the stand.") != std::string::npos);
+		CHECK(!w.objects[item].deleted && w.objects[item].onMap() && w.objects[item].x == px && w.objects[item].y == py - 1);
+		CHECK((w.actors.talkFlags[1] & 2) && g.gameClock.hour == 12);
+		bool way = false;
+		for (const World::Obj &o : w.objects)
+			way |= !o.deleted && o.type == 0xA0 && o.frame == 1 && o.x == 0xC0 && o.y == 0x1CC;
+		CHECK(way);
+		w.deleteObject(item);
+		w.deleteObject(stand);
+		g.handleKey(KEY_ESC);
+	}
+
 	// Drop (sub_2F530): a soft clay pot (0x84) thrown three squares goes squish and leaves a mess (0xC0); a thing that is not fragile lies there
 	{
 		int bx = -1, by = -1;

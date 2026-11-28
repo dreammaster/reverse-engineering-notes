@@ -2959,3 +2959,176 @@ void Game::seControlPanel() {
 
 } // namespace Ultima6
 } // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_2DD70: the gem put on the stand (0x42): the day goes on to noon, the way down at (0xC0, 0x1CC) of the surface is opened (a 0xA0 of frame 1), the flag 2 of actor 1 is set.
+// APPROX(108): the picture of the sun on the gem and the song (0xF) are left out
+void Game::seGemScene() {
+	_world.actors.talkFlags[1] |= 2;
+	for (int guard = 0; guard < 24 * 60 && gameClock.hour != 12; ++guard)
+		minutePassed();
+	_world.objects.reserve(_world.objects.size() + 4);
+	int n = seMake(0xA0, 0xC0, 0x1CC, 0, 0);
+	_world.objects[n].frame = 1;
+}
+
+// sub_302B8, the second half of Move (a thing of the pack, the target chosen with the cursor): the target is a person (the thing is given: "yourself." is the mover himself; "That person is not
+// around!", "Only within the party!", "<name> is carrying too much already." (strength x 20, or sixteen things)); a container that is carried (the thing goes into it, or out of it into the pack
+// when it is there already: "into " / "out of " and the name; "You can't do that!", "That container belongs to someone else!", "That container is already full.", "You have to unready it first.",
+// "How can a container go into itself!"); or the stand (0x42) on the map, which takes anything onto the square up and to the left of it (and sets off sub_2DD70 once); anything else is "nobody.".
+// Out of range is further than a square from the mover for a thing on the map. 5 moves. APPROX(108): what a container takes (`sub_2E693`) is the engine's dropRecipient, the frames that
+// some containers get from their contents (the table at cs:3249) are not set
+void Game::seMoveItemTo(int tx, int ty) {
+	const std::string nl(1, (char)10);
+	int idx = _dropItem, count = _dropCount;
+	_dropItem = -1;
+	int member = actingActor(), mk = _world.actorObject(member);
+	std::vector<int> here;
+	_world.objectsAt(tx, ty, z, here);
+	int target = -1;
+	for (size_t i = here.size(); i-- > 0 && target < 0;)
+		if (!_world.objects[here[i]].invisible())
+			target = here[i];
+	auto done = [&]() {
+		prompt();
+	};
+	if (target < 0 || idx < 0) {
+		message("nobody." + nl);
+		done();
+		return;
+	}
+	World::Obj t = _world.objects[target];
+	const bool carried = carriedObject(t) || t.location() == ObjRecord::IN_CONTAINER;
+	if (!carried) {
+		bool near = t.actor >= 0 ? memberNear(t.actor) : (mk >= 0 && std::abs(tx - (int)_world.objects[mk].x) <= 1 && std::abs(ty - (int)_world.objects[mk].y) <= 1);
+		if (!near) {
+			message("Out of range!" + nl);
+			done();
+			return;
+		}
+	}
+	World::Obj o = _world.objects[idx];
+	if (t.type == 0x42 && !carried) { // the stand
+		_world.objects[idx].status = (uint8_t)(_world.objects[idx].status & ~ObjRecord::LOCATION_MASK);
+		_world.objects[idx].parent = -1;
+		_world.objects[idx].x = (uint16_t)(t.x - 1);
+		_world.objects[idx].y = (uint16_t)(t.y - 1);
+		_world.objects[idx].z = t.z;
+		_world.addToMap(idx);
+		message(nl + "You place the gem on the stand." + nl);
+		if (!(_world.actors.talkFlags[1] & 2))
+			seGemScene();
+		done();
+		return;
+	}
+	const bool stack = _world.isStackable(o.type);
+	if (t.actor >= 0) { // a person
+		int who = t.actor;
+		if (who == member) {
+			message("yourself." + nl);
+			_world.spendMoves(member, 5);
+			done();
+			return;
+		}
+		message(Describe::object(_world, t) + "." + nl);
+		if (!memberNear(who)) {
+			message(nl + "That person is not around!" + nl);
+			done();
+			return;
+		}
+		if (!(_world.actors.status[who] & 0x80)) {
+			message(nl + "Only within the party!" + nl);
+			done();
+			return;
+		}
+		int weight = stack ? _world.weightOfType(o.type, count) : _world.weightOf(idx) + _world.contentsWeight(idx);
+		std::vector<int> pack;
+		_world.inventory(who, pack, false);
+		if (_world.actors.strength[who] * 20 < weight + _world.carriedWeight(who) || pack.size() >= 16) {
+			message(Describe::object(_world, t) + " is carrying too much already." + nl);
+			done();
+			return;
+		}
+		if (o.location() == ObjRecord::READIED)
+			_world.objects[idx].status = (uint8_t)((_world.objects[idx].status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
+		if (stack) {
+			int have = _world.quantityOf(o);
+			_world.addToInventory(who, o.type, o.quality, count);
+			if (count >= have)
+				_world.deleteObject(idx);
+			else
+				_world.setQuantity(_world.objects[idx], have - count);
+		} else {
+			_world.objects[idx].parent = who;
+		}
+		_world.spendMoves(member, 5);
+		done();
+		return;
+	}
+	if (carried) { // a container in a pack
+		std::string name = Describe::object(_world, t);
+		if (target == idx) {
+			message(name + nl + nl + "How can a container go into itself!" + nl);
+			done();
+			return;
+		}
+		if (!dropRecipient(target, idx)) {
+			message(name + nl + nl + "You can't do that!" + nl);
+			done();
+			return;
+		}
+		auto owner = [&](int k) { // sub_2E56A: whose pack it is in
+			while (_world.objects[k].location() == ObjRecord::IN_CONTAINER)
+				k = _world.objects[k].parent;
+			return _world.objects[k].parent;
+		};
+		if (owner(target) != owner(idx)) {
+			message(name + nl + nl + "That container belongs to someone else!" + nl);
+			done();
+			return;
+		}
+		int inside = 0;
+		for (const World::Obj &c : _world.objects)
+			inside += !c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == target;
+		if (inside >= 16) {
+			message(name + nl + nl + "That container is already full." + nl);
+			done();
+			return;
+		}
+		if (o.location() == ObjRecord::READIED) {
+			message(name + nl + nl + "You have to unready it first." + nl);
+			done();
+			return;
+		}
+		if (o.location() == ObjRecord::IN_CONTAINER && o.parent == target) { // out of it, into the pack
+			message("out of " + name + nl);
+			_world.spendMoves(member, 5);
+			_world.objects[idx].status = (uint8_t)((_world.objects[idx].status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_INVENTORY);
+			_world.objects[idx].parent = member;
+			done();
+			return;
+		}
+		message("into " + name + nl);
+		_world.spendMoves(member, 5);
+		if (stack && count < _world.quantityOf(o)) {
+			World::Obj part = o;
+			_world.setQuantity(part, count);
+			_world.setQuantity(_world.objects[idx], _world.quantityOf(o) - count);
+			part.status = (uint8_t)((part.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_CONTAINER);
+			part.parent = target;
+			_world.objects.push_back(part);
+		} else {
+			_world.objects[idx].status = (uint8_t)((_world.objects[idx].status & ~ObjRecord::LOCATION_MASK) | ObjRecord::IN_CONTAINER);
+			_world.objects[idx].parent = target;
+		}
+		done();
+		return;
+	}
+	message("nobody." + nl);
+	done();
+}
+
+} // namespace Ultima6
+} // namespace Ultima6

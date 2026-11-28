@@ -114,6 +114,10 @@ FUNCTIONS = [
     (0x3B58F, "random_range", '(lo, hi)'),
     (0x2DBFE, "scene_door_ambush", 'the scene when the door 0x113 is opened close to the party: actor 0x17 comes and fights'),
     (0x346A8, "use_door_113", 'the door 0x113 turns between frames 1 and 3'),
+    (0x2E56A, "object_owner", 'the actor whose pack an object is in (follows the containers)'),
+    (0x1B5A6, "container_count", 'how many things a container or pack holds'),
+    (0x2F2FC, "ask_quantity", 'asks "How many?" for a stack, returns the count (0: cancelled)'),
+    (0x1FA29, "actor_near_party", 'whether a person is near enough (the party)'),
     # -- the same routine as in the other spin-off, matched by instruction signature (tools/match_functions.py) --
     (0x18194, "read_line", '= Martian Dreams 34E71 (matched by instruction signature)'),
     (0x1F9EC, "party_member_name", '= Martian Dreams 56762 (matched by instruction signature)'),

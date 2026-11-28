@@ -1922,7 +1922,7 @@ void Game::moveItemStart(int idx) {
 		return;
 	}
 	if (!memberNear(actingActor())) {
-		message("\nThis person is not around!\n");
+		message(_world.game == GameId::SavageEmpire ? "\nThat person isn't here!\n" : "\nThis person is not around!\n");
 		prompt();
 		return;
 	}
@@ -1946,6 +1946,13 @@ void Game::moveWhere(int count) {
 		_dropItem = -1;
 		message("\n\nMagical energy prevents you from removing the amulet.\n");
 		prompt();
+		return;
+	}
+	if (_world.game == GameId::SavageEmpire) { // sub_302B8: the target is chosen with the cursor (a person, a container carried, the stand)
+		_pending = 'q';
+		_inventory = false;
+		_cursor = true;
+		_cx = _cy = 5;
 		return;
 	}
 	_moveTarget = true;

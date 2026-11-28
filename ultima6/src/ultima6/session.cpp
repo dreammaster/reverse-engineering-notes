@@ -963,7 +963,7 @@ bool Game::handleKeyInner(int key) {
 		castKey(key);
 		return true;
 	}
-	if (_pending == 'L' || _pending == 'Z' || _pending == 'g' || _pending == 't' || _pending == 'Y' || _pending == 'c' || _pending == 'a' || _pending == 'o' || _pending == 'd') {
+	if (_pending == 'L' || _pending == 'Z' || _pending == 'g' || _pending == 't' || _pending == 'Y' || _pending == 'c' || _pending == 'a' || _pending == 'o' || _pending == 'd' || _pending == 'q') {
 		// the cursor: arrows move it, Enter looks at the cell, Escape gives up
 		switch (key) {
 		case KEY_UP:
@@ -982,7 +982,7 @@ bool Game::handleKeyInner(int key) {
 		case KEY_SPACE: {
 			int mask = z == 0 ? MapData::SURFACE_SIZE - 1 : MapData::DUNGEON_SIZE - 1;
 			bool mdPick = _pending == 'Z', sePick = _pending == 'Y', mdGetPick = _pending == 'g', mdTalkPick = _pending == 't';
-			bool casting = _pending == 'c', attacking = _pending == 'a', orb = _pending == 'o', dropping = _pending == 'd';
+			bool casting = _pending == 'c', attacking = _pending == 'a', orb = _pending == 'o', dropping = _pending == 'd', moving = _pending == 'q';
 			_pending = 0;
 			_cursor = false;
 			if (sePick) {
@@ -996,6 +996,8 @@ bool Game::handleKeyInner(int key) {
 			} else if (orb) {
 				orbAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 				prompt();
+			} else if (moving) {
+				seMoveItemTo((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 			} else if (dropping)
 				dropAt((x + _cx - 5) & mask, (y + _cy - 5) & mask);
 			else if (attacking)
@@ -1025,6 +1027,14 @@ bool Game::handleKeyInner(int key) {
 					mdFinish();
 				else
 					mdContinue(_mdStage, -2);
+				break;
+			}
+			if (_pending == 'q') { // sub_302B8: nobody chosen
+				_dropItem = -1;
+				_pending = 0;
+				_cursor = false;
+				message("nobody.\n");
+				prompt();
 				break;
 			}
 			if (_pending == 'd') { // cmd_drop: no place chosen is "Not possible"
