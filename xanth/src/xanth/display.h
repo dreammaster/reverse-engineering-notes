@@ -88,9 +88,13 @@ public:
 	virtual int conversationMenu(const std::vector<std::string> &options, int initial);
 	virtual void conversationEnd();
 	virtual bool askYesNo(const std::string &) { return false; }
+	virtual int chooseCompanion(const int *ids, int count);
 	virtual int other(const char *name, const intptr_t *args, int count);
 
 private:
+	/** sub_29F77: `count` pictures from `picNum` drawn one after the other (frame deltas exclusive-ored onto the screen), each followed by its delay; backwards when `reverse`. */
+	void playSequence(int picNum, int count, bool reverse);
+	void sleepMs(unsigned ms);
 	void drawRoom();
 	void clearConversationBubble();
 	void expandText(int edge);

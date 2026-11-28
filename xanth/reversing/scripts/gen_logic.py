@@ -40,7 +40,7 @@ HAND = {"object_list_append", "object_has_attr", "object_set_attr", "object_clea
         "object_get_next_sibling", "object_get_points", "object_set_points", "object_get_prop_a", "object_set_prop_a", "object_get_default_verb", "object_set_default_verb",
         "object_is_at", "object_is_within", "print_obj", "ResourceText_GetStr", "Font_WriteMessage", "show_text_box", "wputchar", "wait_ticks_or_click", "realsound_play",
         "Font_WriteString", "_sprintf", "_rand", "random_percent", "run_command", "call_object_handler", "exec_word_handler", "advance_time", "schedule_event",
-        "cancel_event", "event_pending", "add_score", "RoomItem_Draw", "set_room_music", "sub_1DBB7", "sub_1D99F", "sub_1B877", "sub_1B8C5", "sub_1FB15", "run_event", "sub_1AC45", "conversation_set_enabled", "Conversation_GetEntry", "show_compendium", "Conversation_Show"}
+        "cancel_event", "event_pending", "add_score", "RoomItem_Draw", "set_room_music", "sub_1DBB7", "sub_1D99F", "sub_312CF", "sub_1B877", "sub_1B8C5", "sub_1FB15", "run_event", "sub_1AC45", "conversation_set_enabled", "Conversation_GetEntry", "show_compendium", "Conversation_Show"}
 # corrections of the structured output where the decompiler's loop recovery is wrong: function -> [(generated text, replacement)]; each text must be found
 PATCHES = {
     "objh_085": [(

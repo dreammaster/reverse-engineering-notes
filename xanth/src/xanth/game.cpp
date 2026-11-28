@@ -200,6 +200,34 @@ int Game::sub_1DBB7(int minutes) {
 	return 0;
 }
 
+// sub_312CF (sub_508C0): the companion selection screen after Grundy's talk: the picture of the four candidates, each of whom plays an animation; the player clicks one, the others
+// go back (the animations backwards), and the game goes on in the first room of Xanth with the companion (room 0x5B), or without when the player gave up (0x5A).
+int Game::sub_312CF() {
+	Vars &v = state.v;
+	static const struct {
+		int obj, pic, count;
+	} kCandidates[4] = {{6, 0x34A, 0x18}, {0xB, 0x332, 0x18}, {5, 0x31A, 0x18}, {0xA, 0x302, 0x18}};
+	call_object_handler(v.current_room, 0xF);
+	v.previous_room = v.current_room;
+	v.current_room = 0x5A;
+	set_room_music(0x5A);
+	other("game_over_screen", 0x301);
+	for (int i = 0; i < 4; i++)
+		other("sub_29F77", kCandidates[i].pic, kCandidates[i].count, 0);
+	int ids[4] = {kCandidates[0].obj, kCandidates[1].obj, kCandidates[2].obj, kCandidates[3].obj};
+	v.companion_obj = (uint16)ui.chooseCompanion(ids, 4);
+	v.word_85252 = v.companion_obj;
+	for (int i = 0; i < 4; i++)
+		if (kCandidates[i].obj != v.companion_obj)
+			other("sub_29F77", kCandidates[i].pic, kCandidates[i].count, 1);
+	wait_ticks_or_click(0x7D0);
+	int room = v.companion_obj < 1 ? 0x5A : 0x5B;
+	v.current_room = (uint16)room;
+	other("sub_1EED9");
+	v.current_room = 0x5A;
+	return go_to_room(room);
+}
+
 // sub_1D99F: the sword's story goes one step on (word_8526A counts them): a pause, the property of the hilt (object 0x8B) from a table of the program, the hilt redrawn and the
 // text of the step (a table of far pointers to texts, one of them a message) shown.
 int Game::sub_1D99F() {

@@ -778,6 +778,53 @@ void Display::updateCompass() {
 	_compass = mask;
 }
 
+void Display::sleepMs(unsigned ms) {
+	_now += ms;
+	if (_input && ms)
+		_input->wait(ms);
+}
+
+void Display::playSequence(int picNum, int count, bool reverse) {
+	std::vector<PicImage> frames(count > 0 ? count : 0);
+	for (int i = 0; i < count; i++)
+		if (!MainScreen::loadPicture(_files, picNum + i, frames[i]))
+			return;
+	for (int k = 0; k < count; k++) {
+		int i = reverse ? count - 1 - k : k;
+		const PicImage &f = frames[i];
+		unsigned delay = 50u * f.delayBase + (unsigned)(_game->_rand() % (50 * f.delayRandom + 1));
+		if (reverse)
+			sleepMs(delay);
+		drawPicture(_screen, f.x, f.y, &f.pixels[0], f.width, f.height, (f.flags & 0x40) != 0);
+		if (!reverse)
+			sleepMs(delay);
+	}
+}
+
+int Display::chooseCompanion(const int *ids, int count) {
+	if (!_input)
+		return ids[0];
+	Common::Bytes d;
+	Legend::RgnFile rgn;
+	if (!_files.load("XANTH_03.RGN", d) || !rgn.load(d) || rgn.size() < 2)
+		return ids[0];
+	const std::vector<Legend::RgnFile::Region> &regions = rgn.scene(1).regions;      // (the selection screen is picture 0x301; its regions are in screen coordinates)
+	for (;;) {
+		InputEvent e = _input->wait();
+		if (e.type == InputEvent::Quit)
+			return ids[0];
+		_mouseX = e.x;
+		_mouseY = e.y;
+		if (e.type != InputEvent::Click)
+			continue;
+		for (size_t i = regions.size(); i-- > 0;)
+			if (regions[i].contains(e.x, e.y))
+				for (int k = 0; k < count; k++)
+					if (ids[k] == regions[i].id)
+						return ids[k];
+	}
+}
+
 int Display::other(const char *name, const intptr_t *args, int) {
 	if (getenv("XANTH_TRACE"))
 		fprintf(stderr, "other %s(%d, %d, %d)\n", name, (int)args[0], (int)args[1], (int)args[2]);
@@ -803,6 +850,8 @@ int Display::other(const char *name, const intptr_t *args, int) {
 			_frameDrawn = false;
 			_picNum = -1;
 		}
+	} else if (!strcmp(name, "sub_29F77")) {
+		playSequence((int)args[0], (int)args[1], args[2] != 0);
 	} else if (!strcmp(name, "sub_1EED9")) {
 		const intptr_t redraw[5] = {0x10, 0, 0, 0, 0};
 		other("RoomItem_Draw", redraw, 5);

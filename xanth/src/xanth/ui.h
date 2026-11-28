@@ -42,6 +42,9 @@ public:
 	/** The end of the conversation: the scene is taken down and the game screen comes back. */
 	virtual void conversationEnd() {}
 
+	/** The companion selection screen: the player clicks one of the four people; returns the object id chosen, one of `ids`. */
+	virtual int chooseCompanion(const int *ids, int count) { (void)count; return ids[0]; }
+
 	/** A routine of the original that draws, animates or plays; `name` is its name in the original (sub_XXXXX where nothing better is known), `args` the words it was called with. */
 	virtual int other(const char *name, const intptr_t *args, int count) = 0;
 };
@@ -66,6 +69,15 @@ public:
 	virtual int waitTicksOrClick(int) { return 0; }
 	virtual bool askYesNo(const std::string &) { return false; }
 	virtual int other(const char *name, const intptr_t *, int) { others.push_back(name); return 0; }
+	virtual int chooseCompanion(const int *ids, int count) {
+		int c = 0;
+		if (!picks.empty()) {
+			c = picks.front();
+			picks.erase(picks.begin());
+		}
+		others.push_back("chooseCompanion");
+		return ids[c >= 0 && c < count ? c : 0];
+	}
 	virtual void conversationBegin(int picNum) { char b[32]; snprintf(b, sizeof(b), "conversation|%X", picNum); log.push_back(b); }
 	virtual void conversationLine(const std::string &text, bool) { log.push_back("conversation_line|" + text); }
 	virtual int conversationMenu(const std::vector<std::string> &options, int initial) {
