@@ -1004,6 +1004,43 @@ bool Game::dropRecipient(int target, int item) const {
 			count += !c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == target;
 		return count < 16;
 	}
+	if (_world.game == GameId::SavageEmpire) { // container_takes_item (sub_2E693): the containers are the types of ds:1122, with fewer than 16 things in them; a 0x3B or 0x3C takes only the things of the list at ds:115A, a 0x61 those
+		// too and only when it is empty or holds that kind already, a 0xBC only while it is shut (frame 0), the others anything that is not a container itself
+		static const uint16_t CONTAINERS[9] = {0x3B, 0x3C, 0x102, 0xB5, 0xBC, 0xB7, 0xB6, 0xB8, 0x61};
+		static const uint16_t TAKEN[11] = {0x36, 0x37, 0x38, 0x5D, 0x6C, 0x6D, 0x7B, 0x81, 0x82, 0xCC, 0xA};
+		auto in = [](const uint16_t *list, int n, int type) {
+			for (int i = 0; i < n; ++i)
+				if (list[i] == type)
+					return true;
+			return false;
+		};
+		const World::Obj &ct = _world.objects[target];
+		const int it = _world.objects[item].type;
+		if (!in(CONTAINERS, 9, ct.type))
+			return false;
+		int count = 0, first = -1;
+		for (size_t i = 0; i < _world.objects.size(); ++i) {
+			const World::Obj &c = _world.objects[i];
+			if (!c.deleted && c.location() == ObjRecord::IN_CONTAINER && c.parent == target) {
+				++count;
+				if (first < 0)
+					first = (int)i;
+			}
+		}
+		if (count >= 16)
+			return false;
+		switch (ct.type) {
+		case 0x3B:
+		case 0x3C:
+			return in(TAKEN, 11, it);
+		case 0x61:
+			return in(TAKEN, 11, it) && (first < 0 || _world.objects[first].type == it);
+		case 0xBC:
+			return ct.frame == 0;
+		default:
+			return !in(CONTAINERS, 9, it);
+		}
+	}
 	const World::Obj &t = _world.objects[target];
 	bool holder = false;
 	for (int h : HOLDERS)

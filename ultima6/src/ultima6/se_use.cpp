@@ -2959,7 +2959,7 @@ void Game::seGemScene() {
 // around!", "Only within the party!", "<name> is carrying too much already." (strength x 20, or sixteen things)); a container that is carried (the thing goes into it, or out of it into the pack
 // when it is there already: "into " / "out of " and the name; "You can't do that!", "That container belongs to someone else!", "That container is already full.", "You have to unready it first.",
 // "How can a container go into itself!"); or the stand (0x42) on the map, which takes anything onto the square up and to the left of it (and sets off sub_2DD70 once); anything else is "nobody.".
-// Out of range is further than a square from the mover for a thing on the map. 5 moves. APPROX(108): what a container takes (`sub_2E693`) is the engine's dropRecipient, the frames that
+// Out of range is further than a square from the mover for a thing on the map. 5 moves. APPROX(108): what a container takes (`container_takes_item`) is `dropRecipient`'s Savage Empire branch (done), the frames that
 // some containers get from their contents (the table at cs:3249) are not set
 void Game::seMoveItemTo(int tx, int ty) {
 	const std::string nl(1, (char)10);
