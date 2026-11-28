@@ -313,6 +313,44 @@ int main(int argc, char **argv) {
 			step++;
 		}
 		fclose(script);
+		if (getenv("PLAYLOG_AFTER")) {
+			// PLAYLOG_AFTER=<n> [PLAYLOG_SEED=<s>]: after the script, n random commands in the place where it ended (robustness runs in the world of Xanth, where the oracle cannot follow)
+			g_seed = (unsigned)atoi(getenv("PLAYLOG_SEED") ? getenv("PLAYLOG_SEED") : "1") * 2654435761u + 1;
+			int n = atoi(getenv("PLAYLOG_AFTER"));
+			for (int k = 0; k < n; k++, step++) {
+				std::vector<int> things;
+				for (int root = 0; root < 2; root++)
+					g.walkContents(root ? 1 : g.state.v.current_room, true, [&](int o) {
+						if (o != 1 && o != g.state.v.current_room && g.state.objects.type(o) != 1)
+							things.push_back(o);
+						return false;
+					});
+				int verb, dobj = 0, iobj = 0;
+				unsigned r = rnd(100);
+				if (r < 25 || things.empty()) {
+					verb = 0x51;
+					dobj = 1 + (int)rnd(8);
+				} else if (r < 32) {
+					verb = 80;
+				} else {
+					verb = r < 80 ? usual[rnd((unsigned)usual.size())] : verbs[rnd((unsigned)verbs.size())];
+					const Xanth::VerbInfo *vi = Xanth::findVerb(verb);
+					dobj = things[rnd((unsigned)things.size())];
+					if (vi && vi->objects == 2)
+						iobj = things[rnd((unsigned)things.size())];
+					if (!vi || vi->objects == 0)
+						dobj = 0;
+				}
+				ui.picks.clear();
+				ui.picks.push_back((int)rnd(4));
+				g.setSeed(12345u + (unsigned)step * 7919u);
+				bool conversation = false;
+				std::string l = runCommand(g, ui, step, verb, dobj, iobj, &conversation);
+				fprintf(log, "%s\n", l.c_str());
+				if (getenv("PLAYLOG_VERBOSE"))
+					printf("%d [room %u] %d %d %d%s\n", step, (unsigned)g.state.v.current_room, verb, dobj, iobj, conversation ? " (CONVERSATION)" : "");
+			}
+		}
 		fclose(log);
 		return 0;
 	}
