@@ -41,6 +41,8 @@ patch) is recorded in the tree's `VERSIONS.md`. `python tools/vis_engines.py` li
 | `src/vis-5.0.3-2025` | 5.0.3 / 1192 | 18 Feb 2025 | 0xC0 = 192 (its data: 0xB2, upgraded on load) | The Night of the Rabbit | a copy with Lua 5.4 and the later changes |
 | `src/vis-unidentified-ninenoirlives` | not found | 2022 | `VIS5` | Nine Noir Lives | notes only |
 
+**The Whispered World, two more findings (28 Nov 2026).** (1) The Linux GOG installer `the_whispered_world_special_edition_en_3_2_0419_16378.sh` (Special Edition, Nov 2017) ships `TWWSE`, 22,364,946 bytes, ELF64 "with debug_info, not stripped": it is the **Deponia 2 / Deponia 3 executable (engine 4.2.5 / 1185, Dec 2015) with 34 bytes different** (the build id at 0x2bc and the password block at 0xa258d8), so it is covered by `src/vis-4.2.5-2015` and carries full symbols; its `data.vis` is 115,227,396 bytes (the 2009 Windows one is 126.6 MB). Known by: byte comparison with `Deponia2-Linux/.../Deponia2`. (2) The Windows `TWW.exe` (Steam) is **wrapped by a Steam DRM stub**: `.text` has entropy 8.00, the entry point (RVA 0x31a2ed) is in the `.bind` section (entropy 7.99), and the stub is obfuscated with junk jumps; IDA finds only 6 functions in it. It has to be unwrapped (or dumped from memory) before it can be disassembled. IDA tooling: `tools/ida/run_ida_script.ps1`, database `ida/tww/TWW.idb` (the wrapped file; not useful yet).
+
 Not yet looked at: the Windows and macOS builds of these games, other Visionaire games (Chaos on Deponia, Edna & Harvey, The Whispered World, ...), and Linux builds of other patch levels. (Chaos on Deponia is Deponia 2, Goodbye Deponia is Deponia 3, Deponia Doomsday is Deponia 4.)
 
 ## What the Linux builds have in common

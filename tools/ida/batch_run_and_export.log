@@ -1,0 +1,60 @@
+============================================================
+[*] batch_run_and_export starting
+[*] auto_wait (initial)
+[*] idb = C:\dev\visionnaire\ida\tww\TWW.idb
+[*] ARGV = ['C:\\dev\\visionnaire\\tools\\ida\\batch_run_and_export.py', 'C:\\dev\\visionnaire\\tools\\ida\\report_init.py', 'noexport']
+[*] executing C:\dev\visionnaire\tools\ida\report_init.py
+----- begin target script output -----
+processor metapc base 0x401000
+.text 0x401000 0x652000
+.idata 0x652000 0x652940
+.rdata 0x652940 0x6c6000
+.data 0x6c6000 0x716000
+.bind 0x71a000 0x770000
+functions 6
+names 680
+RTTI-style names 26
+0x4255b0 ?SetDialog@TGDialog@@QAEXABVTVisionaireObject@@@Z
+0x448e70 ?PreLoad@TGameControl@@QAE_NABVwxString@@AAVTXMLFileReader@@@Z
+0x4fb790 ?Open@TComposedFileManager@@SA_NAAVTFile@@ABVwxFileName@@@Z
+0x532100 ?InitXMLNames@TVisionaireGame@@SAXXZ
+0x5335c0 ?UpdateVersion@TVisionaireGame@@QAE_NH_N@Z
+0x54c3c0 ?ResizeImage@TPictureMEM@@QAE_NABV1@ABVwxPoint@@_N2@Z
+0x652000 RegQueryValueExW
+0x652004 RegOpenKeyExW
+0x652008 RegCloseKey
+0x65200c GetUserNameW
+0x652014 ImageList_SetDragCursorImage
+0x652018 ImageList_DragLeave
+0x65201c ImageList_DragEnter
+0x652020 ImageList_DragMove
+0x652024 ImageList_EndDrag
+0x652028 ImageList_Add
+0x65202c ImageList_ReplaceIcon
+0x652030 ImageList_Destroy
+0x652034 ImageList_Create
+0x652038 ImageList_GetImageCount
+0x65203c ImageList_Draw
+0x652040 ImageList_GetIconSize
+0x652044 CreateStatusWindowW
+0x652048 InitCommonControls
+0x65204c ImageList_BeginDrag
+0x652054 GetPixel
+0x652058 SetPixel
+0x65205c Polyline
+0x652060 PolyBezier
+0x652064 TextOutW
+0x652068 RealizePalette
+0x65206c SelectPalette
+0x652070 SetROP2
+0x652074 GetTextMetricsW
+0x652078 GetCharABCWidthsW
+0x65207c GetTextExtentPoint32W
+0x652080 GetTextExtentExPointW
+0x652084 SetWindowOrgEx
+0x652088 SetViewportOrgEx
+0x65208c SetWindowExtEx
+----- end target script output -----
+[*] auto_wait (post-script)
+[*] noexport requested -- skipping asm/idc export and save
+[*] done, exiting 0
