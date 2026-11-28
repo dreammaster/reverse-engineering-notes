@@ -939,6 +939,18 @@ int main() {
 		}
 	}
 
+	// the door 0x113 (sub_346A8) turns between frames 1 and 3; opened close to the party, the story's scene sets flag 1 of actor 1
+	{
+		clearEast(w, px, py);
+		int door = put(w, 0x113, 1, px + 1, py, 0);
+		w.actors.talkFlags[1] &= 0xFE;
+		useEast(w, g, px, py);
+		CHECK(w.objects[door].frame == 3 && (w.actors.talkFlags[1] & 1));
+		useEast(w, g, px, py);
+		CHECK(w.objects[door].frame == 1);
+		w.deleteObject(door);
+	}
+
 	// Savage Empire's look (sub_2EE8D): "You see ", the time on a sundial by day, what a bucket holds
 	{
 		w.moveObject(w.actorObject(1), px, py, 0);

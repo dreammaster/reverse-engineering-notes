@@ -1260,12 +1260,27 @@ void Game::seAction(uint32_t sub, int idx) {
 		message("and you scrape a quantity from the crystal.\n");
 		break;
 	}
-	case 0x346A8: // a door (0x113): frame 1 opens to frame 4, frame 3 to frame 4 as well (APPROX(79): the sub_2DBFE call when the party is close is left out)
-		if (o.frame == 1)
-			o.frame = 4;
-		else if (o.frame == 3)
-			o.frame = 4;
+	case 0x346A8: { // sub_346A8: a door (0x113) turns between frame 1 and frame 3. Opened (1 to 3) with the party within two squares of it on its level and the story not yet at it (talk flag 1 of actor 1 clear),
+		// the scene of sub_2DBFE follows: actor 0x17 comes to (0x73, 0xA8), set to fight (worktype 8), and the flag is set. APPROX(79): the picture and the song of the scene, the bit 0x80 of the
+		// actor flags of 2 and 0x17 (dword_42CF8) and sub_1FB60(2) are left out
+		if (o.frame == 1) {
+			o.frame = 3;
+			int lk = _leaderObject;
+			if (std::abs((int)o.x - x) <= 2 && std::abs((int)o.y - y) <= 2 && o.z == _world.objects[lk].z && !(_world.actors.talkFlags[1] & 1)) {
+				int a = _world.actorObject(0x17);
+				if (a >= 0 && !_world.objects[a].deleted) {
+					_world.moveObject(a, 0x73, 0xA8, z);
+					_world.actors.worktype[0x17] = 8;
+				}
+				_world.actors.talkFlags[0x10] |= 0x80;
+				_world.actors.talkFlags[0x17] |= 1;
+				_world.actors.talkFlags[1] |= 1;
+			}
+		} else if (o.frame == 3) {
+			o.frame = 1;
+		}
 		break;
+	}
 	case 0x31671: { // a grenade (0x89) or a device (0xF0), frame 0: it is lit (0x8A) or activated (0xF1) and goes off after three minutes (sub_31838, in advanceTime)
 		bool grenade = o.type == 0x89;
 		if (o.frame != 0) {
