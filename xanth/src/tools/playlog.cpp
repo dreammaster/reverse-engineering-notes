@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -350,6 +351,13 @@ int main(int argc, char **argv) {
 				if (getenv("PLAYLOG_VERBOSE"))
 					printf("%d [room %u] %d %d %d%s\n", step, (unsigned)g.state.v.current_room, verb, dobj, iobj, conversation ? " (CONVERSATION)" : "");
 			}
+		}
+		if (getenv("PLAYLOG_OTHERS")) {          // the routines of the original that only the real Ui implements, and how often the commands reached them
+			std::map<std::string, int> count;
+			for (size_t i = 0; i < ui.others.size(); i++)
+				count[ui.others[i]]++;
+			for (std::map<std::string, int>::const_iterator it = count.begin(); it != count.end(); ++it)
+				printf("   other %s: %d\n", it->first.c_str(), it->second);
 		}
 		fclose(log);
 		return 0;
