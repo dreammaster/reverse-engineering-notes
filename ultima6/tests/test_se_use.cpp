@@ -1118,7 +1118,11 @@ int main() {
 		CHECK(al.level[who] == 2 && al.strength[who] == str + 1);
 		int after = g.gameClock.hour * 60 + g.gameClock.minute;
 		int spent = (after - minute + 1440) % 1440; // (the clock may stand a minute ahead from the turns before)
-		CHECK(spent >= 120 && spent <= 122);
+		CHECK(spent >= 120 && spent <= 130); // (the turns after the rest: the members wake with as many moves as their dexterity, those who walked to the camp pay for it)
+		{ // the party gathered round the leader before it slept (the places of ds:28B6 / 28BE) and stands there still
+			int k1 = w.actorObject(al.partyRoster[1]), k0 = w.actorObject(al.partyRoster[0]);
+			CHECK(k1 >= 0 && k0 >= 0 && std::abs((int)w.objects[k1].x - w.objects[k0].x) <= 1 && std::abs((int)w.objects[k1].y - w.objects[k0].y) <= 1 && (w.objects[k1].x != w.objects[k0].x || w.objects[k1].y != w.objects[k0].y));
+		}
 	}
 
 	// Savage Empire's look (sub_2EE8D): "You see ", the time on a sundial by day, what a bucket holds

@@ -3221,6 +3221,22 @@ bool Game::seRestSleep() {
 		}
 		return false;
 	};
+	// cmd_rest 3A467: the party gathers round the leader's place (up to 20 rounds of steps to the places of the tables at ds:28B6 / 28BE) and, once there, faces outward (ds:28C6)
+	{
+		static const int GX[8] = {0, 0, 1, -1, 1, -1, 1, -1}, GY[8] = {-1, 1, 0, 0, -1, 1, 1, -1}, FACE[8] = {4, 0, 6, 2, 4, 0, 6, 2};
+		for (int round = 20, moving = 1; moving && round > 0; --round) {
+			moving = 0;
+			for (int m = 0; m < al.partySize; ++m) {
+				int actor = al.partyRoster[m];
+				if (_world.actorObject(actor) < 0)
+					continue;
+				if (_creatures.walkTo(actor, x + GX[m & 7], y + GY[m & 7]))
+					moving = 1;
+				else
+					_actors.face(actor, FACE[m & 7]);
+			}
+		}
+	}
 	if (_mdRestHours > 4) {
 		bool healed = false;
 		for (int m = 0; m < al.partySize; ++m) {
@@ -3260,6 +3276,22 @@ bool Game::seRestRun() {
 		advanceTime(20);
 		if (dreams && s < al.partySize && seDream(al.partyRoster[s]))
 			return false;
+	}
+	// cmd_rest 3A6F0: the members wake: each takes its own picture again and has as many moves as its dexterity; the party's place is where the member in control stands
+	for (int m = 0; m < al.partySize; ++m) {
+		int actor = al.partyRoster[m], k = _world.actorObject(actor);
+		if (k < 0)
+			continue;
+		_world.objects[k].type = al.baseObjFrame[actor] & 0x3FF;
+		_world.objects[k].frame = (uint8_t)(al.baseObjFrame[actor] >> 10);
+		al.moves[actor] = al.dexterity[actor];
+	}
+	{
+		int k = _world.actorObject(al.partyRoster[_member < al.partySize ? _member : 0]);
+		if (k >= 0) {
+			x = _world.objects[k].x;
+			y = _world.objects[k].y;
+		}
 	}
 	return true;
 }
