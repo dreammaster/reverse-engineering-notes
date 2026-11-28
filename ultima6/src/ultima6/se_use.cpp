@@ -3345,3 +3345,134 @@ void Game::seHazardEffect(int actor, int hazard) {
 
 } // namespace Ultima6
 } // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// advance_time (sub_14746), what an advance of `minutes` does in Savage Empire; the turn loop calls it for one minute, resting for twenty, the scenes for an hour, a change of level for none:
+// the device timer; for every actor that is there: the torches the member holds, then the minutes one by one (seActorMinute), then the hazards (sub_145A4, once for the call); then the clock (an hour that
+// goes by lowers the rest cooldown byte_42249 and the liquor counter byte_4226E and sets the people to their schedules, sub_2800B; a new hour clears the flags 0x24/0x25 and sets 0x27 of the globals,
+// byte_4226C/D/F), and the light of the place (byte_42253).
+// APPROX(114): the stray local var_C of the awakening (it is never set: the original looks for a bed 0xF6 on a square it does not know, and for 0x126 it makes the parts 0x125 / 0x127) is not done: the
+// sleeper takes its own picture again and that is all; the two bytes at ds:27FA that fall by the minutes (nothing sets them), word_3FC6A (a chance of one in eight, read by a routine of the sky) and the
+// sky picture at a long advance (sub_38E06) are left out
+void Game::seAdvanceTime(int minutes) {
+	ObjList &al = _world.actors;
+	std::vector<uint8_t> &g = al.globals;
+	seTimerTick(minutes);
+	bool lit = false;
+	for (int actor = 0; actor < ObjList::ACTORS; ++actor) {
+		int k = _world.actorObject(actor);
+		if (k < 0 || _world.objects[k].deleted || _world.objects[k].type == 0)
+			continue;
+		if (al.status[actor] & 0x80)
+			seTorches(actor, minutes, lit);
+		for (int m = 0; m < minutes; ++m)
+			seActorMinute(actor);
+	}
+	seHazards();
+	for (int m = 0; m < minutes; ++m) {
+		gameClock.advance(1);
+		if (gameClock.minute != 0)
+			continue;
+		if (_restCooldown > 0)
+			--_restCooldown;
+		if (g.size() > 0x26 && g[0x26])
+			--g[0x26];
+		_actors.seHourChanged(gameClock);
+	}
+	if (_seLastHour != gameClock.hour) {
+		if (_seLastHour >= 0 && g.size() > 0x27) {
+			g[0x24] = 0;
+			g[0x25] = 0;
+			g[0x27] = 1;
+		}
+		_seLastHour = gameClock.hour;
+	}
+	seLightLevel(lit);
+	_creatures.despawn(x, y, z);
+	_creatures.checkEggs(x, y, z, gameClock.hour);
+	if (al.hp[1] == 0 && (al.status[1] & 0x10))
+		avatarDied();
+}
+
+// the lit torches (0xD1) a member holds in the hands: half of the time one burns, and when its quality (the minutes it has left) is not more than the minutes that pass it is gone ("A torch burned out.")
+void Game::seTorches(int actor, int minutes, bool &lit) {
+	std::vector<int> inv;
+	_world.inventory(actor, inv, false);
+	for (int i : inv) {
+		World::Obj &t = _world.objects[i];
+		if (t.deleted || t.location() != ObjRecord::READIED || t.type != 0xD1)
+			continue;
+		if (seRoll(0, 1) == 0) {
+			lit = true;
+			continue;
+		}
+		if (t.quality <= minutes) {
+			message("A torch burned out.\n");
+			_world.deleteObject(i);
+		} else {
+			lit = true;
+			t.quality = (uint8_t)(t.quality - minutes);
+		}
+	}
+}
+
+// one minute of one actor: the helper Motazz sent goes when the fight is over; protection (status 1), the wild state (object status 0x80, at the end of the fight), the curse (0x40) and the charm
+// (4) wear off one minute in 26 (the charm through end_charm, sub_281BB); paralysis (status 2) one minute in four when the strength reaches a roll of 1 to 30; sleep (status 4, except the sleep
+// of a schedule, worktype 0x91) one minute in 21 when the actor is in the part of the world that is loaded, and it takes its own picture again; poison (status 8, not protected, not the actor 0x19) hurts one minute in eight.
+void Game::seActorMinute(int actor) {
+	ObjList &al = _world.actors;
+	int k = _world.actorObject(actor);
+	if (k < 0)
+		return;
+	World::Obj &o = _world.objects[k];
+	std::vector<uint8_t> &g = al.globals;
+	bool fight = g.size() > 0x78 && g[0x78];
+	if (actor != 0 && actor == _seAid && !fight) { // sub_14746 14881
+		al.worktype[actor] = 0x13;
+		al.status[actor] = (uint8_t)((al.status[actor] & 0x9F) | 0x60);
+		_seAid = 0;
+	}
+	if ((al.status[actor] & 1) && seRoll(0, 25) == 0)
+		al.status[actor] &= 0xFE;
+	if ((o.status & 0x80) && !fight)
+		o.status &= 0x7F;
+	if ((o.status & 0x40) && seRoll(0, 25) == 0)
+		o.status &= 0xBF;
+	if ((o.status & 4) && seRoll(0, 25) == 0)
+		endCharm(actor);
+	if ((al.status[actor] & 2) && seRoll(0, 3) == 0 && seStrength(actor) >= seRoll(1, 30))
+		al.status[actor] &= 0xFD;
+	if ((al.status[actor] & 4) && al.worktype[actor] != 0x91 && mdInViewAt(o.x, o.y, o.z) && seRoll(0, 20) == 0) {
+		al.status[actor] &= 0xFB;
+		o.type = al.baseObjFrame[actor] & 0x3FF;
+		o.frame = (uint8_t)(al.baseObjFrame[actor] >> 10);
+	}
+	if ((al.status[actor] & 8) && !(al.status[actor] & 1) && actor != 0x19 && seRoll(0, 7) == 0)
+		_combat.applyDamage(actor, actor, 1);
+}
+
+// byte_42253 at the end of advance_time: below the surface 0 (2 on level 2 until the lights are put out, bit 4 of the flags of actor 1); on the surface 1 at night and by day from 6:40 to 18:00
+// climbing and falling by one in ten minutes from 2 to 7; a lit torch held or a totem's light (byte_4225A) makes it 2 at least
+void Game::seLightLevel(bool lit) {
+	int t = gameClock.hour * 60 + gameClock.minute, light;
+	if (z == 2 && !(_world.actors.talkFlags[1] & 4))
+		light = 2;
+	else if (z > 0)
+		light = 0;
+	else if (t < 400 || t > 1080)
+		light = 1;
+	else if (t < 440)
+		light = (t - 400) / 10 + 2;
+	else if (t <= 1040)
+		light = 7;
+	else
+		light = (1080 - t) / 10 + 2;
+	if (light < 2 && (lit || (_world.actors.globals.size() > 0x12 && _world.actors.globals[0x12])))
+		light = 2;
+	_seLight = light;
+}
+
+} // namespace Ultima6
+} // namespace Ultima6

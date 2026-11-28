@@ -562,11 +562,9 @@ void Game::stealItem(int idx) {
 // force fields burn, and the lit torch that is carried burns down.
 // APPROX(9): not the original's exact behaviour, see docs/approximations.md
 void Game::partyHazards() {
-	if (_world.game == GameId::MartianDreams)
-		return; // sub_22B27 does it (md_hazards.cpp): the tiles are those of Mars
+	if (_world.game == GameId::MartianDreams || _world.game == GameId::SavageEmpire)
+		return; // sub_22B27 does it (md_hazards.cpp): the tiles are those of Mars; Savage Empire's advance of time (seAdvanceTime) has its own
 	ObjList &a = _world.actors;
-	if (_world.game == GameId::SavageEmpire)
-		seHazards(); // sub_145A4: every actor in view, by the tiles of Savage Empire
 	for (int m = 0; m < a.partySize; ++m) {
 		int actor = a.partyRoster[m];
 		int k = _world.actorObject(actor);
@@ -576,8 +574,6 @@ void Game::partyHazards() {
 		const CreatureStats *cs = Combat::stats(o.type);
 		if (_world.game != GameId::MartianDreams && (a.status[actor] & 0x08) && !(a.status[actor] & 0x01) && _rng.next() % 8 == 0) // poisoned and not protected: 1 hp now and then (sub_13305 13716)
 			_combat.applyDamage(actor, actor, 1);
-		if (_world.game == GameId::SavageEmpire)
-			continue; // its tiles are seHazards'
 		// the tiles on the square
 		int mask = o.z == 0 ? 0x3FF : 0xFF;
 		std::vector<int> tiles;

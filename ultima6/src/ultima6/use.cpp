@@ -1593,6 +1593,14 @@ void Game::endCharm(int actor) {
 		return;
 	a.status[actor] = (uint8_t)((a.status[actor] & 0x9F) | (a.movementFlags[actor] & 0x60));
 	_world.objects[k].status &= ~0x04;
+	if (_world.game == GameId::SavageEmpire) { // end_charm (sub_281BB): a member of the party goes back to the good side, and the worktype is the combat one (in a fight) or the follower's (party mode) or none (solo)
+		if (a.status[actor] & 0x80)
+			a.status[actor] = (uint8_t)((a.status[actor] & 0x9F) | 0x40);
+		if (_world.actors.globals.size() > 0x78 && _world.actors.globals[0x78])
+			a.worktype[actor] = a.unknown13f1[actor];
+		else
+			a.worktype[actor] = _solo < 0 ? 1 : 0;
+	}
 }
 
 // use_silver_horn (3525F): three times a spot is looked for at the edge of the view (a random side, a random place along it) where a silver serpent (0x19D) and the

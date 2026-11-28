@@ -92,6 +92,9 @@ public:
 	 * (sub_371A0) crossfades to it over 60 ticks. The original calls music_choose when a game starts or is loaded (sub_14FF5, sub_160A2), when the party changes level or place (climb_between_levels,
 	 * sub_1983B, sub_252BB, sub_25433) and at the end of the story scenes, so combat starts no song of its own. APPROX(107): a change of level is every place the original calls it from.
 	 */
+	int seLight() const { // the light of Savage Empire (byte_42253)
+		return _seLight;
+	}
 	int seSong() const {
 		return _seSong;
 	}
@@ -442,6 +445,8 @@ private:
 	int _member = 0; // party member shown in the panel (the one the player controls, byte_404A4, while no other is looked at in the inventory)
 	int _solo = -1;      // byte_40513: the roster place of the member who walks alone (the digit keys), -1 for party mode
 	int _seAid = 0;      // word_4E53E: the helper Motazz sent (0 for none)
+	int _seLight = 7;    // byte_42253: the light of Savage Empire (0 dark ... 7 full day), worked out by every advance of time
+	int _seLastHour = -1; // byte_3FC97: the hour the last advance saw (-1 before the first)
 	int _soloSaved = 0;  // byte_40514: the worktype the controlling member had before it was made to be controlled
 	void soloKey(int key);
 	// Martian Dreams' Use (md_use.cpp)
@@ -488,6 +493,10 @@ private:
 	int seMaxHp(int actor) const;                                               // sub_2872A: twice the strength and four times the level, 1 to 255
 	int seTimerLeft() const;
 	void seSetTimer(int minutes, int object);
+	void seAdvanceTime(int minutes);                                            // advance_time (sub_14746) of Savage Empire
+	void seActorMinute(int actor);                                              // what a minute does to one actor there
+	void seTorches(int actor, int minutes, bool &lit);                          // the lit torches the member holds burn down
+	void seLightLevel(bool lit);                                                // the light of the place and the hour
 	void seTimerTick(int minutes);                                              // the device timer of sub_14746 (globals 0x5A / 0x5C)
 	bool seTooWeak(int strength);                                               // sub_30E72: a roll of 1-30 below (45 - strength) / 2
 	bool seReach(const World::Obj &target, int tx, int ty);                     // the "Out of range!" test of the "On " handlers (prints it)

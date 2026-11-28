@@ -5897,6 +5897,7 @@ static Bytes_0(void) {
 	create_insn	(0X1A0B3);
 	create_insn	(0X1A0BF);
 	create_insn	(0X1A0C7);
+	set_name	(0X1A0C7,	"refresh_view");
 	create_insn	(x=0X1A0CA);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A0D2);
@@ -6222,10 +6223,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X1A546);
 	op_stkvar	(x,	0);
 	op_hex		(x,	1);
-	create_insn	(x=0X1A551);
-	op_stkvar	(x,	1);
-	create_insn	(x=0X1A559);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -6235,6 +6232,10 @@ static Bytes_1(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X1A551);
+	op_stkvar	(x,	1);
+	create_insn	(x=0X1A559);
+	op_hex		(x,	1);
 	create_insn	(x=0X1A55E);
 	op_stkvar	(x,	0);
 	op_hex		(x,	1);
@@ -6279,6 +6280,7 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X1A5C6);
 	create_insn	(0X1A5D1);
+	set_name	(0X1A5D1,	"square_loaded");
 	create_insn	(x=0X1A5DA);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1A5E0);
@@ -6492,6 +6494,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1A95A);
 	op_hex		(x,	1);
 	create_insn	(0X1A96A);
+	set_name	(0X1A96A,	"object_next_at");
 	create_insn	(x=0X1A96D);
 	op_hex		(x,	1);
 	create_insn	(x=0X1A978);
@@ -6633,6 +6636,7 @@ static Bytes_1(void) {
 	op_hex		(x,	1);
 	create_insn	(0X1AB8C);
 	create_insn	(0X1AB94);
+	set_name	(0X1AB94,	"object_first_at");
 	create_insn	(x=0X1AB99);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X1AB9C);
@@ -12765,6 +12769,15 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X23016);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X23019);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2301C);
@@ -12779,15 +12792,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X23038);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X23042);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X23054);
@@ -17061,6 +17065,7 @@ static Bytes_2(void) {
 	create_insn	(0X27FDF);
 	create_insn	(0X27FE7);
 	create_insn	(0X2800B);
+	set_name	(0X2800B,	"schedules_new_hour");
 	create_insn	(x=0X2800E);
 	op_hex		(x,	1);
 	create_insn	(0X28019);
@@ -17135,6 +17140,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X281B3);
 	create_insn	(0X281BB);
+	set_name	(0X281BB,	"end_charm");
 	create_insn	(x=0X281BF);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X281C6);
@@ -19293,6 +19299,15 @@ static Bytes_2(void) {
 	create_insn	(0X2AF89);
 	create_insn	(x=0X2AF8B);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2AF8E);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2AF99);
@@ -19311,15 +19326,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2AFDD);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2AFE3);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2AFEC);
@@ -25844,6 +25850,15 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3497A);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X34986);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X34989);
@@ -25861,15 +25876,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X349B9);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X349C3);
 	op_hex		(x,	1);
 	create_insn	(x=0X349C6);
@@ -28940,6 +28946,7 @@ static Bytes_4(void) {
 	create_insn	(0X38DC1);
 	create_insn	(0X38DDE);
 	create_insn	(0X38E06);
+	set_name	(0X38E06,	"draw_sky");
 	create_insn	(x=0X38E09);
 	op_hex		(x,	1);
 	create_insn	(0X38E26);
@@ -32071,6 +32078,15 @@ static Bytes_4(void) {
 	create_insn	(0X3DE30);
 	create_insn	(x=0X3DE3B);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3DE3E);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3DE45);
@@ -32092,15 +32108,6 @@ static Bytes_4(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X3DE79);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3DE7C);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3DE7F);
@@ -33735,6 +33742,7 @@ static Bytes_5(void) {
 	create_word	(0X3FC6E);
 	create_word	(0X3FC70);
 	create_byte	(0X3FC97);
+	set_name	(0X3FC97,	"last_hour_seen");
 	create_strlit	(0X3FD6A,	0X7);
 	set_name	(0X3FD6A,	"aDIs");
 	create_strlit	(0X3FD71,	0XB);
@@ -34100,6 +34108,7 @@ static Bytes_5(void) {
 	create_word	(0X41F52);
 	create_byte	(0X42248);
 	create_byte	(0X42249);
+	set_name	(0X42249,	"rest_cooldown");
 	create_byte	(0X4224A);
 	set_name	(0X4224A,	"clock_minute");
 	create_byte	(0X4224B);
@@ -34113,6 +34122,7 @@ static Bytes_5(void) {
 	create_byte	(0X42252);
 	set_name	(0X42252,	"acting_member");
 	create_byte	(0X42253);
+	set_name	(0X42253,	"light_level");
 	create_word	(0X42254);
 	set_name	(0X42254,	"party_x");
 	create_word	(0X42256);
@@ -34120,18 +34130,24 @@ static Bytes_5(void) {
 	create_word	(0X42258);
 	set_name	(0X42258,	"party_z");
 	create_byte	(0X4225A);
+	set_name	(0X4225A,	"totem_light");
 	create_byte	(0X4225B);
 	create_byte	(0X4226C);
 	create_byte	(0X4226D);
 	create_byte	(0X4226E);
+	set_name	(0X4226E,	"drunk_counter");
 	create_byte	(0X4226F);
 	create_word	(0X42270);
 	create_word	(0X422A2);
+	set_name	(0X422A2,	"device_timer_minutes");
 	create_word	(0X422A4);
+	set_name	(0X422A4,	"device_timer_object");
 	create_word	(0X422A6);
 	make_array	(0X422A8,	0X18);
 	create_byte	(0X422C0);
+	set_name	(0X422C0,	"in_combat");
 	create_byte	(0X422C1);
+	set_name	(0X422C1,	"solo_member");
 	create_byte	(0X422C2);
 	create_byte	(0X422C3);
 	create_byte	(0X422C9);
@@ -34516,6 +34532,7 @@ static Bytes_5(void) {
 	create_word	(0X4E14E);
 	create_word	(0X4E150);
 	create_word	(0X4E53E);
+	set_name	(0X4E53E,	"helper_actor");
 	create_byte	(0X4E60A);
 	create_byte	(0X4E61A);
 	create_word	(0X4E61C);

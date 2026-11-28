@@ -478,8 +478,9 @@ int main() {
 			g.log.clear();
 			useEast(w, g, px, py);
 			CHECK(logText(g).find("Grenade lit!") != std::string::npos && w.objects[nade].deleted);
-			CHECK(w.actors.globals[0x5A] == 3);
-			g.advanceTime(2);
+			int left = w.actors.globals[0x5A]; // (the turn that follows the command may take a minute off, as in the original)
+			CHECK(left >= 2 && left <= 3);
+			g.advanceTime(left - 1);
 			CHECK(w.actors.globals[0x5A] == 1 && w.actors.hp[victim] == 200);
 			g.advanceTime(1);
 			CHECK(w.actors.globals[0x5A] == 0 && w.actors.hp[victim] < 200);

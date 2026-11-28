@@ -51,6 +51,41 @@ void ActorManager::hourChanged(const GameClock &gameClock) {
 	}
 }
 
+// Savage Empire's hour (hours_schedules, sub_2800B): the actors 2-0x97 only; a vanished worktype 0x9B goes back to the schedule; a person whose flag 0x80 (unknown12f1) is set and who is not in
+// the party takes worktype 0x92 and is done; the others that have no task of their own (0x80 and up, or 7) and are not in the party take the last entry of their schedule for this hour
+// (the day of the week of the entry, or any day) as the one in force and go to it (0x81). There is no 0x91 sleeper to wake here: the sleep ends by chance (Game::seActorMinute).
+void ActorManager::seHourChanged(const GameClock &gameClock) {
+	const Schedule &sc = _world.schedule;
+	ObjList &a = _world.actors;
+	int dow = gameClock.dayOfWeek();
+	for (int actor = 2; actor < 0x98; ++actor) {
+		if (a.worktype[actor] == 0x9B)
+			a.worktype[actor] = GO_TO_SCHEDULE;
+		if ((a.unknown12f1[actor] & 0x80) && !(a.status[actor] & 0x80)) {
+			a.worktype[actor] = 0x92;
+			continue;
+		}
+		if (_world.actorObject(actor) < 0)
+			continue;
+		if (!(a.worktype[actor] >= 0x80 || a.worktype[actor] == 7))
+			continue;
+		if (a.status[actor] & 0x80)
+			continue;
+		int count = sc.entryCount(actor);
+		int first = sc.index[actor];
+		for (int i = first + count - 1; i >= first; --i) {
+			Schedule::Entry e = sc.entry(i);
+			if (e.hour != gameClock.hour)
+				continue;
+			if (e.dayOfWeek != dow && e.dayOfWeek != 0)
+				continue;
+			a.scheduleIndex[actor] = (uint8_t)(i - first);
+			a.worktype[actor] = GO_TO_SCHEDULE;
+			break;
+		}
+	}
+}
+
 int ActorManager::directionOf(int dx, int dy) {
 	static const int TABLE[3][3] = {{7, 0, 1}, {6, -1, 2}, {5, 4, 3}};
 	return TABLE[(dy > 0) - (dy < 0) + 1][(dx > 0) - (dx < 0) + 1];

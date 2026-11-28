@@ -77,8 +77,12 @@ Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(worl
 	gameClock.day = g[4];
 	gameClock.month = g[5];
 	gameClock.year = g[6] | (g[7] << 8);
-	_actors.hourChanged(gameClock);
-	updateMoons();
+	if (world.game == GameId::SavageEmpire) {
+		seAdvanceTime(0); // the start calls advance_time with nothing: the light, the hazards
+	} else {
+		_actors.hourChanged(gameClock);
+		updateMoons();
+	}
 	_creatures.checkEggs(x, y, z, gameClock.hour);
 }
 
@@ -98,6 +102,10 @@ bool Game::save() {
 // APPROX(10): not the original's exact behaviour, see docs/approximations.md
 // What one game minute does (sub_13305): the clock, the timers, the hourly schedules and magic points, the party's hazards, the eggs.
 void Game::minutePassed() {
+	if (_world.game == GameId::SavageEmpire) { // advance_time (sub_14746) is its own routine
+		seAdvanceTime(1);
+		return;
+	}
 	// Time Stop (byte_404BA, advance_time 1330F-1334C): while it lasts the whole minute is skipped, the clock included; the minute it runs out goes on as usual
 	if (_timeStop > 1) {
 		--_timeStop;
@@ -121,13 +129,6 @@ void Game::minutePassed() {
 	for (int t = 0; t < 16; ++t)
 		if (_world.actors.globals[0x12 + t])
 			--_world.actors.globals[0x12 + t];
-	if (_world.game == GameId::SavageEmpire && _world.actors.globals.size() > 0x26 && _world.actors.globals[0x26]) // the liquor's counter (byte_4226E) goes down with the minutes (sub_14746)
-		--_world.actors.globals[0x26];
-	if (_world.game == GameId::SavageEmpire && _seAid != 0 && _world.actors.globals.size() > 0x78 && _world.actors.globals[0x78] == 0) { // the helper Motazz sent goes when the fight is over (sub_14746 14881)
-		_world.actors.worktype[_seAid] = 0x13;
-		_world.actors.status[_seAid] = (uint8_t)((_world.actors.status[_seAid] & 0x9F) | 0x60);
-		_seAid = 0;
-	}
 	if (gameClock.minute == 0) {
 		// every hour the people with magic recover as many magic points as their level
 		ObjList &al = _world.actors;
@@ -206,8 +207,12 @@ void Game::avatarDied() {
 
 // Time that passes without anyone acting (resting): minutes at a time.
 void Game::advanceTime(int minutes) {
-	if (_world.game == GameId::SavageEmpire)
-		seTimerTick(minutes);
+	if (_world.game == GameId::SavageEmpire) {
+		seAdvanceTime(minutes);
+		for (int i = 0; i < minutes && !_dead; ++i)
+			_actors.scheduleUpdate(x, y, z);
+		return;
+	}
 	for (int i = 0; i < minutes && !_dead; ++i) {
 		minutePassed();
 		_actors.scheduleUpdate(x, y, z);
@@ -1207,8 +1212,11 @@ void Game::render(Framebuffer &screen) {
 	_renderer.setTurn(_world.game == GameId::MartianDreams ? _mdTurn : 0);
 	if (_world.game == GameId::MartianDreams)
 		light = mdLight(); // byte_4112B: Mars's own day and the lamps in hand
-	bool lit = al.globals[0x12 + Magic::TIMER_LIGHT] != 0;
-	for (int m = 0; m < al.partySize && !lit; ++m) {
+	else if (_world.game == GameId::SavageEmpire)
+		light = _seLight; // byte_42253, worked out by the last advance of time
+	const bool se = _world.game == GameId::SavageEmpire; // its light needs none of Ultima VI's torches and spell
+	bool lit = !se && al.globals[0x12 + Magic::TIMER_LIGHT] != 0;
+	for (int m = 0; m < al.partySize && !lit && !se; ++m) {
 		std::vector<int> inv;
 		_world.inventory(al.partyRoster[m], inv, false);
 		for (int i : inv)
@@ -1216,7 +1224,7 @@ void Game::render(Framebuffer &screen) {
 	}
 	if (light < 4 && lit)
 		light = 4;
-	if (al.globals[0x12 + Magic::TIMER_LIGHT] > 100)
+	if (!se && al.globals[0x12 + Magic::TIMER_LIGHT] > 100)
 		light = 7; // Great Light (APPROX(15): the original's radius for it is not traced)
 	if (_peek) {
 		uint8_t dark[MapRenderer::CELLS * MapRenderer::CELLS];
