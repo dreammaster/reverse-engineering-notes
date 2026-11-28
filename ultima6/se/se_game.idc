@@ -21758,6 +21758,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X2DBF5);
 	op_stkvar	(x,	1);
 	create_insn	(0X2DBFE);
+	set_name	(0X2DBFE,	"scene_door_ambush");
 	create_insn	(x=0X2DC01);
 	op_hex		(x,	1);
 	create_insn	(x=0X2DC30);
@@ -25665,6 +25666,7 @@ static Bytes_3(void) {
 	create_byte	(0X3466C);
 	make_array	(0X3466C,	0X3C);
 	create_insn	(0X346A8);
+	set_name	(0X346A8,	"use_door_113");
 	create_insn	(x=0X346AB);
 	op_hex		(x,	1);
 	create_insn	(x=0X346B0);
@@ -25888,12 +25890,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X34A46);
 	op_stkvar	(x,	0);
-	create_insn	(x=0X34A5E);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X34A61);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X34A64);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -25903,6 +25899,12 @@ static Bytes_4(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X34A5E);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X34A61);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X34A64);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X34A70);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X34A76);
@@ -32133,12 +32135,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3DF3A);
 	op_hex		(x,	1);
-	create_insn	(x=0X3DF3E);
-	op_hex		(x,	1);
-	create_insn	(x=0X3DF41);
-	op_stkvar	(x,	0);
-	create_insn	(x=0X3DF44);
-	op_stkvar	(x,	0);
 }
 
 //------------------------------------------------------------------------
@@ -32148,6 +32144,12 @@ static Bytes_5(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X3DF3E);
+	op_hex		(x,	1);
+	create_insn	(x=0X3DF41);
+	op_stkvar	(x,	0);
+	create_insn	(x=0X3DF44);
+	op_stkvar	(x,	0);
 	create_insn	(x=0X3DF4F);
 	op_hex		(x,	1);
 	create_insn	(x=0X3DF53);

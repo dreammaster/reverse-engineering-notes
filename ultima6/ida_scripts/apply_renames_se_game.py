@@ -112,6 +112,8 @@ FUNCTIONS = [
     (0x37566, "avatar_dead_wake", 'the Avatar wakes in Intanya hut'),
     (0x37694, "fade_out", 'the fade-out'),
     (0x3B58F, "random_range", '(lo, hi)'),
+    (0x2DBFE, "scene_door_ambush", 'the scene when the door 0x113 is opened close to the party: actor 0x17 comes and fights'),
+    (0x346A8, "use_door_113", 'the door 0x113 turns between frames 1 and 3'),
     # -- the same routine as in the other spin-off, matched by instruction signature (tools/match_functions.py) --
     (0x18194, "read_line", '= Martian Dreams 34E71 (matched by instruction signature)'),
     (0x1F9EC, "party_member_name", '= Martian Dreams 56762 (matched by instruction signature)'),

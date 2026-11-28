@@ -52866,7 +52866,7 @@ sub_281BB       endp
 ; Attributes: bp-based frame
 
 sub_2822A       proc far                ; CODE XREF: sub_14FF5+506↑P
-                                        ; sub_2DBFE+143↓P
+                                        ; scene_door_ambush+143↓P
                 push    bp
                 mov     bp, sp
                 push    si
@@ -65722,7 +65722,7 @@ sub_2DBD3       endp
 
 ; Attributes: bp-based frame
 
-sub_2DBFE       proc far                ; CODE XREF: sub_346A8+B3↓p
+scene_door_ambush proc far              ; CODE XREF: use_door_113+B3↓p
 
 var_4           = byte ptr -4
 var_3           = byte ptr -3
@@ -65851,7 +65851,7 @@ var_2           = byte ptr -2
                 mov     sp, bp
                 pop     bp
                 retf
-sub_2DBFE       endp
+scene_door_ambush endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -79829,7 +79829,7 @@ sub_343E9       endp
 
 ; Attributes: bp-based frame
 
-sub_346A8       proc far                ; CODE XREF: cmd_use+478↓p
+use_door_113    proc far                ; CODE XREF: cmd_use+478↓p
 
 var_6           = word ptr -6
 var_4           = word ptr -4
@@ -79906,11 +79906,11 @@ arg_0           = word ptr  6
                 test    ax, 1
                 jnz     short loc_3477B
                 push    cs
-                call    near ptr sub_2DBFE
+                call    near ptr scene_door_ambush
                 jmp     short loc_3477B
 ; ---------------------------------------------------------------------------
 
-loc_34760:                              ; CODE XREF: sub_346A8+7E↑j
+loc_34760:                              ; CODE XREF: use_door_113+7E↑j
                 cmp     di, 3
                 jnz     short loc_3477B
                 mov     bx, si
@@ -79922,14 +79922,14 @@ loc_34760:                              ; CODE XREF: sub_346A8+7E↑j
                 shl     bx, 1
                 mov     [bx-6306h], ax
 
-loc_3477B:                              ; CODE XREF: sub_346A8+9A↑j
-                                        ; sub_346A8+A0↑j ...
+loc_3477B:                              ; CODE XREF: use_door_113+9A↑j
+                                        ; use_door_113+A0↑j ...
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf    2
-sub_346A8       endp
+use_door_113    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -83487,7 +83487,7 @@ loc_36261:                              ; CODE XREF: cmd_use+40C↑j
 ; ---------------------------------------------------------------------------
                 push    target_object
                 push    cs
-                call    near ptr sub_346A8
+                call    near ptr use_door_113
                 jmp     loc_36508
 ; ---------------------------------------------------------------------------
                 push    target_object
@@ -90793,7 +90793,7 @@ sub_396B8       endp
 ; Attributes: bp-based frame
 
 sub_39A7A       proc far                ; CODE XREF: sub_21998+113↑P
-                                        ; sub_2DBFE+1D↑P ...
+                                        ; scene_door_ambush+1D↑P ...
 
 arg_0           = word ptr  6
 
@@ -90862,7 +90862,7 @@ sub_39A7A       endp
 
 ; Attributes: bp-based frame
 
-sub_39B0A       proc far                ; CODE XREF: sub_2DBFE+CC↑P
+sub_39B0A       proc far                ; CODE XREF: scene_door_ambush+CC↑P
                                         ; scene_gem_on_stand+F0↑P ...
 
 var_20          = byte ptr -20h
@@ -130087,8 +130087,8 @@ byte_46967      db 0                    ; DATA XREF: sub_34147+89↑r
                 db    0
                 db    0
                 db    0
-byte_4696C      db 0                    ; DATA XREF: sub_2DBFE+11C↑r
-                                        ; sub_2DBFE+121↑w ...
+byte_4696C      db 0                    ; DATA XREF: scene_door_ambush+11C↑r
+                                        ; scene_door_ambush+121↑w ...
 byte_4696D      db 0                    ; DATA XREF: sub_3542B+36↑r
                 db    0
 byte_4696F      db 0                    ; DATA XREF: sub_3542B+3D↑r
@@ -130096,8 +130096,8 @@ byte_46970      db 0                    ; DATA XREF: sub_31293+164↑r
                                         ; sub_31293+169↑w ...
                 db    0
                 db    0
-byte_46973      db 0                    ; DATA XREF: sub_2DBFE+10B↑r
-                                        ; sub_2DBFE+110↑w
+byte_46973      db 0                    ; DATA XREF: scene_door_ambush+10B↑r
+                                        ; scene_door_ambush+110↑w
                 db    0
 byte_46975      db 0                    ; DATA XREF: flash_at_square:loc_34EBA↑w
                 db    0
@@ -132616,9 +132616,9 @@ word_47344      dw 0                    ; DATA XREF: sub_2E51A+C↑r
 word_47347      dw 0                    ; DATA XREF: cmd_get+1E↑r
                                         ; cmd_get+27↑r
                 align 2
-word_4734A      dw 0                    ; DATA XREF: sub_346A8+29↑r
-                                        ; sub_346A8+4A↑r
-byte_4734C      db 0                    ; DATA XREF: sub_346A8+6E↑r
+word_4734A      dw 0                    ; DATA XREF: use_door_113+29↑r
+                                        ; use_door_113+4A↑r
+byte_4734C      db 0                    ; DATA XREF: use_door_113+6E↑r
                 db    0
                 db    0
                 db    0
