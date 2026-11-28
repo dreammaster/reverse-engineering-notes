@@ -210,6 +210,15 @@ FUNCTIONS = [
     (0x30F99, "recompute_carried_weight", '= Savage Empire 1E7A2 (matched by instruction signature)'),
     (0x35778, "print_string", '= Savage Empire 18AB9 (matched by instruction signature)'),
     (0x36D07, "random_range", '= Savage Empire 3B58F (matched by instruction signature)'),
+    # -- matched by instruction signature (tools/match_functions.py) --
+    (0x147F2, "object_owner", '= Savage Empire 2E56A (matched by instruction signature)'),
+    (0x159A9, "ask_quantity", '= Savage Empire 2F2FC (matched by instruction signature)'),
+    (0x22360, "hazard_flash", '= Savage Empire 1431D (matched by instruction signature)'),
+    (0x2C32A, "container_count", '= Savage Empire 1B5A6 (matched by instruction signature)'),
+    (0x101AF, "__restorezero", '= Ultima VI 101B0 (matched by instruction signature)'),
+    (0x126F4, "PCMP@", '= Ultima VI 107D2 (matched by instruction signature)'),
+    (0x128B0, "SCOPY@", '= Ultima VI 10C6E (matched by instruction signature)'),
+    (0x34F3F, "define_text_window", '= Ultima VI 17449 (matched by instruction signature)'),
 ]
 
 # (ea, new_name, note): globals

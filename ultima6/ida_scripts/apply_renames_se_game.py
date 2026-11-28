@@ -129,6 +129,12 @@ FUNCTIONS = [
     (0x18194, "read_line", '= Martian Dreams 34E71 (matched by instruction signature)'),
     (0x1F9EC, "party_member_name", '= Martian Dreams 56762 (matched by instruction signature)'),
     (0x285E0, "defence_value", '= Martian Dreams 18286 (matched by instruction signature)'),
+    # -- matched by instruction signature (tools/match_functions.py) --
+    (0x27169, "request_talk", '= Martian Dreams 29C22 (matched by instruction signature)'),
+    (0x101AF, "__restorezero", '= Ultima VI 101B0 (matched by instruction signature)'),
+    (0x11C32, "PCMP@", '= Ultima VI 107D2 (matched by instruction signature)'),
+    (0x11DEE, "SCOPY@", '= Ultima VI 10C6E (matched by instruction signature)'),
+    (0x18262, "define_text_window", '= Ultima VI 17449 (matched by instruction signature)'),
 ]
 
 # (ea, new_name, note): globals

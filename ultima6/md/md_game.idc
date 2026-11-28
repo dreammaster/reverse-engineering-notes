@@ -681,6 +681,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X101AB);
 	op_hex		(x,	0);
 	create_insn	(0X101AF);
+	set_name	(0X101AF,	"__restorezero");
 	set_cmt	(0X101B7,	"DOS - SET INTERRUPT VECTOR\nAL = interrupt number\nDS:DX = new vector to be used for specified interrupt",	0);
 	create_insn	(x=0X101B7);
 	op_hex		(x,	0);
@@ -2425,6 +2426,7 @@ static Bytes_0(void) {
 	create_insn	(0X126CB);
 	create_insn	(0X126DD);
 	create_insn	(0X126F4);
+	set_name	(0X126F4,	"PCMP@");
 	create_insn	(x=0X12708);
 	op_hex		(x,	1);
 	create_insn	(x=0X1270B);
@@ -2479,6 +2481,7 @@ static Bytes_0(void) {
 	create_insn	(0X12885);
 	create_insn	(0X128AD);
 	create_insn	(0X128B0);
+	set_name	(0X128B0,	"SCOPY@");
 	create_insn	(x=0X128B6);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X128B9);
@@ -3542,6 +3545,7 @@ static Bytes_0(void) {
 	create_insn	(x=0X147EB);
 	op_hex		(x,	1);
 	create_insn	(0X147F2);
+	set_name	(0X147F2,	"object_owner");
 	create_insn	(x=0X147F6);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X14806);
@@ -4243,6 +4247,7 @@ static Bytes_0(void) {
 	op_hex		(x,	1);
 	create_insn	(0X15997);
 	create_insn	(0X159A9);
+	set_name	(0X159A9,	"ask_quantity");
 	create_insn	(x=0X159AC);
 	op_hex		(x,	1);
 	create_insn	(x=0X159B1);
@@ -6475,6 +6480,15 @@ static Bytes_0(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X18DAA);
 	op_stkvar	(x,	0);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_1(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X18DB2);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X18DBA);
@@ -6486,15 +6500,6 @@ static Bytes_0(void) {
 	create_insn	(x=0X18DD6);
 	op_stkvar	(x,	0);
 	create_insn	(0X18DDF);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_1(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X18DEA);
 	create_insn	(0X18DF5);
 	create_insn	(0X18E00);
@@ -13036,6 +13041,15 @@ static Bytes_1(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X20614);
 	create_insn	(0X20616);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_2(void) {
+        auto x;
+#define id x
+
 	create_insn	(0X20618);
 	create_insn	(x=0X2061C);
 	op_stkvar	(x,	1);
@@ -13046,15 +13060,6 @@ static Bytes_1(void) {
 	create_insn	(x=0X2063B);
 	op_stkvar	(x,	0);
 	create_insn	(0X20650);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_2(void) {
-        auto x;
-#define id x
-
 	create_insn	(0X20652);
 	create_insn	(0X20654);
 	create_insn	(x=0X20658);
@@ -14897,6 +14902,7 @@ static Bytes_2(void) {
 	op_stkvar	(x,	0);
 	create_insn	(0X22349);
 	create_insn	(0X22360);
+	set_name	(0X22360,	"hazard_flash");
 	create_insn	(0X2237B);
 	create_insn	(0X22382);
 	create_insn	(x=0X22385);
@@ -19497,6 +19503,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X28CDF);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X28CED);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X28CFF);
@@ -19510,15 +19525,6 @@ static Bytes_2(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X28D2B);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X28D3D);
 	op_hex		(x,	1);
 	create_insn	(x=0X28D40);
@@ -21886,6 +21892,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X2C316);
 	op_hex		(x,	1);
 	create_insn	(0X2C32A);
+	set_name	(0X2C32A,	"container_count");
 	create_insn	(x=0X2C331);
 	op_stkvar	(x,	0);
 	create_insn	(0X2C33A);
@@ -26181,6 +26188,15 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X320E8);
 	op_seg		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X320F9);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X32100);
@@ -26198,15 +26214,6 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X32160);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X32167);
 	op_hex		(x,	1);
 	create_insn	(x=0X32171);
@@ -27277,6 +27284,7 @@ static Bytes_4(void) {
 	create_insn	(x=0X34F0D);
 	op_stkvar	(x,	0);
 	create_insn	(0X34F3F);
+	set_name	(0X34F3F,	"define_text_window");
 	create_insn	(x=0X34F43);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X34F4A);
@@ -32040,6 +32048,15 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3AEDE);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3AEE1);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3AEE4);
@@ -32058,15 +32075,6 @@ static Bytes_4(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3AEFB);
 	op_stkvar	(x,	0);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3AEFE);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3AF0E);
@@ -37099,6 +37107,15 @@ static Bytes_5(void) {
 	create_insn	(0X520BA);
 	create_insn	(x=0X520BE);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_6(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X52110);
 	op_seg		(x,	1);
 	create_insn	(0X52121);
@@ -37119,15 +37136,6 @@ static Bytes_5(void) {
 	create_insn	(0X521CB);
 	create_insn	(x=0X521CD);
 	op_hex		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_6(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X521D9);
 	op_hex		(x,	1);
 	create_insn	(0X521E3);
@@ -43798,6 +43806,15 @@ static Bytes_6(void) {
 	set_cmt	(0X5C367,	"switch 8 cases",	0);
 	create_insn	(x=0X5C36F);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_7(void) {
+        auto x;
+#define id x
+
 	set_cmt	(0X5C371,	"switch jump",	0);
 	create_insn	(x=0X5C371);
 	op_plain_offset	(x,	0,	0X5B490);
@@ -43811,15 +43828,6 @@ static Bytes_6(void) {
 	set_cmt	(0X5C388,	"jumptable 0005C371 case 2",	1);
 	create_insn	(x=0X5C388);
 	op_seg		(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_7(void) {
-        auto x;
-#define id x
-
 	set_cmt	(0X5C391,	"jumptable 0005C371 case 3",	1);
 	create_insn	(x=0X5C391);
 	op_seg		(x,	1);

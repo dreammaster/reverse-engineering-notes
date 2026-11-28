@@ -190,7 +190,7 @@ sub_10113       endp ; sp-analysis failed
 sub_10133       proc near               ; CODE XREF: start+239↓P
                                         ; sub_3B79A-2B108↓P
                 mov     ds, cs:word_1023E
-                call    sub_101AF
+                call    __restorezero
                 xor     ax, ax
                 mov     si, ax
                 mov     cx, 2Dh ; '-'
@@ -264,7 +264,7 @@ sub_1016C       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_101AF       proc far                ; CODE XREF: sub_10133+5↑P
+__restorezero   proc far                ; CODE XREF: sub_10133+5↑P
                 push    ds
                 mov     ax, 2500h
                 lds     dx, dword_3FB22
@@ -294,7 +294,7 @@ sub_101AF       proc far                ; CODE XREF: sub_10133+5↑P
                                         ; DS:DX = new vector to be used for specified interrupt
                 pop     ds
                 retf
-sub_101AF       endp
+__restorezero   endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -6482,7 +6482,7 @@ sub_126DD       endp
 ; =============== S U B R O U T I N E =======================================
 
 
-sub_126F4       proc far                ; CODE XREF: sub_12FA2+FB↓P
+PCMP@           proc far                ; CODE XREF: sub_12FA2+FB↓P
                 push    cx
                 mov     ch, al
                 mov     cl, 4
@@ -6500,9 +6500,9 @@ sub_126F4       proc far                ; CODE XREF: sub_12FA2+FB↓P
                 jnz     short locret_12714
                 cmp     ax, bx
 
-locret_12714:                           ; CODE XREF: sub_126F4+1C↑j
+locret_12714:                           ; CODE XREF: PCMP@+1C↑j
                 retf
-sub_126F4       endp
+PCMP@           endp
 
 ; ---------------------------------------------------------------------------
                 pop     cx
@@ -6842,7 +6842,7 @@ sub_12885       endp ; sp-analysis failed
 
 ; Attributes: bp-based frame
 
-sub_128B0       proc far                ; CODE XREF: sub_2852E+5B↓P
+SCOPY@          proc far                ; CODE XREF: sub_2852E+5B↓P
                                         ; sub_289DF+75↓P ...
 
 arg_0           = dword ptr  6
@@ -6865,7 +6865,7 @@ arg_4           = dword ptr  0Ah
                 pop     si
                 pop     bp
                 retf    8
-sub_128B0       endp
+SCOPY@          endp
 
 ; ---------------------------------------------------------------------------
                 align 8
@@ -8087,7 +8087,7 @@ loc_13044:                              ; CODE XREF: sub_12FA2+56↑j
                 xor     bx, bx
                 mov     dx, word_4976E
                 mov     ax, word_4976C
-                call    sub_126F4
+                call    PCMP@
                 jnz     short loc_130A8
                 push    cs
                 call    near ptr sub_12CDD
@@ -9218,7 +9218,7 @@ loc_1392A:                              ; CODE XREF: sub_13611+292↑j
                 push    ax
                 mov     ax, 18h
                 push    ax
-                call    sub_34F3F
+                call    define_text_window
                 mov     ax, 0EBD0h
                 push    ax
                 call    sub_34F8A
@@ -9244,7 +9244,7 @@ loc_1392A:                              ; CODE XREF: sub_13611+292↑j
                 push    ax
                 mov     ax, 0Dh
                 push    ax
-                call    sub_34F3F
+                call    define_text_window
                 mov     ax, 0EBEBh
                 push    ax
                 mov     ax, 17h
@@ -9255,7 +9255,7 @@ loc_1392A:                              ; CODE XREF: sub_13611+292↑j
                 push    ax
                 mov     ax, 17h
                 push    ax
-                call    sub_34F3F
+                call    define_text_window
                 mov     ax, 0EBE2h
                 push    ax
                 mov     ax, 2
@@ -9266,7 +9266,7 @@ loc_1392A:                              ; CODE XREF: sub_13611+292↑j
                 push    ax
                 mov     ax, 12h
                 push    ax
-                call    sub_34F3F
+                call    define_text_window
                 mov     ax, 0EBEBh
                 push    ax
                 call    sub_34F8A
@@ -11169,7 +11169,7 @@ sub_147D6       endp
 
 ; Attributes: bp-based frame
 
-sub_147F2       proc far                ; CODE XREF: cmd_move+AF6↓p
+object_owner    proc far                ; CODE XREF: cmd_move+AF6↓p
                                         ; cmd_move+AFC↓p
 
 arg_0           = word ptr  6
@@ -11179,7 +11179,7 @@ arg_0           = word ptr  6
                 push    si
                 mov     si, [bp+arg_0]
 
-loc_147F9:                              ; CODE XREF: sub_147F2+19↓j
+loc_147F9:                              ; CODE XREF: object_owner+19↓j
                 mov     ax, si
                 mov     dx, 3
                 imul    dx
@@ -11191,7 +11191,7 @@ loc_147F9:                              ; CODE XREF: sub_147F2+19↓j
                 pop     si
                 pop     bp
                 retf    2
-sub_147F2       endp
+object_owner    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -11360,7 +11360,7 @@ sub_1485A       endp
 
 ; Attributes: bp-based frame
 
-sub_1490F       proc far                ; CODE XREF: sub_159A9+AE↓p
+sub_1490F       proc far                ; CODE XREF: ask_quantity+AE↓p
                                         ; sub_58E42+33E↓P ...
 
 arg_0           = word ptr  6
@@ -13718,7 +13718,7 @@ sub_15913       endp
 
 ; Attributes: bp-based frame
 
-sub_159A9       proc far                ; CODE XREF: sub_15BFE+191↓p
+ask_quantity    proc far                ; CODE XREF: sub_15BFE+191↓p
                                         ; cmd_move+6E7↓p ...
 
 var_E           = word ptr -0Eh
@@ -13745,7 +13745,7 @@ arg_0           = word ptr  6
                 jmp     loc_15AB8
 ; ---------------------------------------------------------------------------
 
-loc_159CD:                              ; CODE XREF: sub_159A9+1F↑j
+loc_159CD:                              ; CODE XREF: ask_quantity+1F↑j
                 mov     bx, [bp+arg_0]
                 mov     al, [bx+3266h]
                 mov     ah, 0
@@ -13755,7 +13755,7 @@ loc_159CD:                              ; CODE XREF: sub_159A9+1F↑j
                 jmp     loc_15AB8
 ; ---------------------------------------------------------------------------
 
-loc_159E1:                              ; CODE XREF: sub_159A9+33↑j
+loc_159E1:                              ; CODE XREF: ask_quantity+33↑j
                 cmp     [bp+var_8], 2
                 jnz     short loc_159F1
                 shl     bx, 1
@@ -13764,19 +13764,19 @@ loc_159E1:                              ; CODE XREF: sub_159A9+33↑j
                 jmp     short loc_159FA
 ; ---------------------------------------------------------------------------
 
-loc_159F1:                              ; CODE XREF: sub_159A9+3C↑j
+loc_159F1:                              ; CODE XREF: ask_quantity+3C↑j
                 mov     bx, [bp+arg_0]
                 shl     bx, 1
                 mov     ax, [bx+54BAh]
 
-loc_159FA:                              ; CODE XREF: sub_159A9+46↑j
+loc_159FA:                              ; CODE XREF: ask_quantity+46↑j
                 mov     di, ax
                 cmp     ax, 1
                 jnz     short loc_15A04
                 jmp     loc_15AB3
 ; ---------------------------------------------------------------------------
 
-loc_15A04:                              ; CODE XREF: sub_159A9+56↑j
+loc_15A04:                              ; CODE XREF: ask_quantity+56↑j
                 mov     ax, word_4E67E
                 mov     [bp+var_C], ax
                 mov     bx, word_4168B
@@ -13828,7 +13828,7 @@ loc_15A04:                              ; CODE XREF: sub_159A9+56↑j
                 jmp     short loc_15ABD
 ; ---------------------------------------------------------------------------
 
-loc_15A7F:                              ; CODE XREF: sub_159A9+B6↑j
+loc_15A7F:                              ; CODE XREF: ask_quantity+B6↑j
                 cmp     si, di
                 jg      short loc_15A8C
                 or      si, si
@@ -13836,8 +13836,8 @@ loc_15A7F:                              ; CODE XREF: sub_159A9+B6↑j
                 cmp     si, 0FFFEh
                 jnz     short loc_15AA8
 
-loc_15A8C:                              ; CODE XREF: sub_159A9+D8↑j
-                                        ; sub_159A9+DC↑j
+loc_15A8C:                              ; CODE XREF: ask_quantity+D8↑j
+                                        ; ask_quantity+DC↑j
                 mov     ax, 0Ah
                 push    ax
                 push    [bp+var_A]
@@ -13852,34 +13852,34 @@ loc_15A8C:                              ; CODE XREF: sub_159A9+D8↑j
                 jmp     short loc_15ABD
 ; ---------------------------------------------------------------------------
 
-loc_15AA8:                              ; CODE XREF: sub_159A9+E1↑j
+loc_15AA8:                              ; CODE XREF: ask_quantity+E1↑j
                 mov     ax, 0Ah
                 push    ax
                 call    sub_35517
                 jmp     short loc_15ABB
 ; ---------------------------------------------------------------------------
 
-loc_15AB3:                              ; CODE XREF: sub_159A9+58↑j
+loc_15AB3:                              ; CODE XREF: ask_quantity+58↑j
                 mov     si, 1
                 jmp     short loc_15ABB
 ; ---------------------------------------------------------------------------
 
-loc_15AB8:                              ; CODE XREF: sub_159A9+21↑j
-                                        ; sub_159A9+35↑j
+loc_15AB8:                              ; CODE XREF: ask_quantity+21↑j
+                                        ; ask_quantity+35↑j
                 mov     si, 1
 
-loc_15ABB:                              ; CODE XREF: sub_159A9+108↑j
-                                        ; sub_159A9+10D↑j
+loc_15ABB:                              ; CODE XREF: ask_quantity+108↑j
+                                        ; ask_quantity+10D↑j
                 mov     ax, si
 
-loc_15ABD:                              ; CODE XREF: sub_159A9+D4↑j
-                                        ; sub_159A9+FD↑j
+loc_15ABD:                              ; CODE XREF: ask_quantity+D4↑j
+                                        ; ask_quantity+FD↑j
                 pop     di
                 pop     si
                 mov     sp, bp
                 pop     bp
                 retf    2
-sub_159A9       endp
+ask_quantity    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -14266,7 +14266,7 @@ loc_15D84:                              ; CODE XREF: sub_15BFE+181↑j
                 jz      short loc_15D9C
                 push    word_4E67E
                 push    cs
-                call    near ptr sub_159A9
+                call    near ptr ask_quantity
                 mov     [bp+var_14], ax
                 or      ax, ax
                 jnz     short loc_15D9C
@@ -17108,7 +17108,7 @@ loc_17510:                              ; CODE XREF: cmd_move+6BD↑j
 loc_17527:                              ; CODE XREF: cmd_move+6DD↑j
                 push    word_4E67E
                 push    cs
-                call    near ptr sub_159A9
+                call    near ptr ask_quantity
                 mov     [bp+var_14], ax
                 or      ax, ax
                 jnz     short loc_17539
@@ -17573,11 +17573,11 @@ loc_1792C:                              ; CODE XREF: cmd_move:loc_17594↑j
 loc_17936:                              ; CODE XREF: cmd_move+AE5↑j
                 push    word_4E67E
                 push    cs
-                call    near ptr sub_147F2
+                call    near ptr object_owner
                 push    ax
                 push    si
                 push    cs
-                call    near ptr sub_147F2
+                call    near ptr object_owner
                 pop     dx
                 cmp     dx, ax
                 jz      short loc_17962
@@ -40469,7 +40469,7 @@ sub_2232B       endp
 
 ; Attributes: bp-based frame
 
-sub_22360       proc far                ; CODE XREF: advance_time+9F↓p
+hazard_flash    proc far                ; CODE XREF: advance_time+9F↓p
                                         ; sub_2AB3D:loc_2ADE0↓P ...
                 push    bp
                 mov     bp, sp
@@ -40480,10 +40480,10 @@ sub_22360       proc far                ; CODE XREF: advance_time+9F↓p
                 push    cs
                 call    near ptr sub_22301
 
-loc_22379:                              ; CODE XREF: sub_22360+8↑j
+loc_22379:                              ; CODE XREF: hazard_flash+8↑j
                 pop     bp
                 retf
-sub_22360       endp
+hazard_flash    endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -41611,7 +41611,7 @@ loc_22BBA:                              ; CODE XREF: advance_time+44↑j
                 jl      short loc_22B6D
                 call    canal_barges_update
                 push    cs
-                call    near ptr sub_22360
+                call    near ptr hazard_flash
 
 loc_22BC9:                              ; CODE XREF: advance_time+3F↑j
                 xor     ax, ax
@@ -53087,7 +53087,7 @@ arg_0           = word ptr  6
                 push    word ptr dword_4496A+2
                 push    dx
                 mov     cx, 3
-                call    sub_128B0
+                call    SCOPY@
                 mov     ax, si
                 mov     dx, 3
                 imul    dx
@@ -53690,7 +53690,7 @@ arg_0           = word ptr  6
                 push    word ptr dword_4496A+2
                 push    dx
                 mov     cx, 3
-                call    sub_128B0
+                call    SCOPY@
                 mov     ax, [bp+var_4]
                 and     ax, 3FFh
                 mov     [bp+var_6], ax
@@ -56265,7 +56265,7 @@ loc_29D05:                              ; CODE XREF: actor_worktype_act+10↑j
                 push    word ptr dword_4496A+2
                 push    dx
                 mov     cx, 3
-                call    sub_128B0
+                call    SCOPY@
                 mov     ax, [bp+var_A]
                 and     ax, 3FFh
                 mov     [bp+var_2], ax
@@ -57606,7 +57606,7 @@ loc_2A795:                              ; CODE XREF: sub_2A755+39↑j
                 push    word ptr dword_4496A+2
                 push    dx
                 mov     cx, 3
-                call    sub_128B0
+                call    SCOPY@
                 push    si
                 mov     ax, [bp+var_6]
                 and     ax, 3FFh
@@ -58376,7 +58376,7 @@ loc_2AD94:                              ; CODE XREF: sub_2AB3D+252↑j
 
 loc_2ADE0:                              ; CODE XREF: sub_2AB3D+262↑j
                                         ; sub_2AB3D+26F↑j ...
-                call    sub_22360
+                call    hazard_flash
                 les     bx, dword_44180
                 add     bx, [bp+var_6]
                 cmp     byte ptr es:[bx], 2
@@ -60689,7 +60689,7 @@ arg_2           = word ptr  8
                 push    si
                 push    di
                 push    [bp+arg_0]
-                call    sub_2C32A
+                call    container_count
                 mov     si, ax
                 cmp     [bp+arg_0], 10h
                 jge     short loc_2BDE6
@@ -61422,7 +61422,7 @@ sub_2C1FE       endp
 
 ; Attributes: bp-based frame
 
-sub_2C32A       proc far                ; CODE XREF: sub_2BDC4+B↑P
+container_count proc far                ; CODE XREF: sub_2BDC4+B↑P
 
 arg_0           = word ptr  6
 
@@ -61437,12 +61437,12 @@ arg_0           = word ptr  6
                 jmp     short loc_2C33F
 ; ---------------------------------------------------------------------------
 
-loc_2C33A:                              ; CODE XREF: sub_2C32A+19↓j
+loc_2C33A:                              ; CODE XREF: container_count+19↓j
                 inc     si
                 push    cs
                 call    near ptr container_next
 
-loc_2C33F:                              ; CODE XREF: sub_2C32A+E↑j
+loc_2C33F:                              ; CODE XREF: container_count+E↑j
                 mov     di, ax
                 or      di, di
                 jge     short loc_2C33A
@@ -61451,7 +61451,7 @@ loc_2C33F:                              ; CODE XREF: sub_2C32A+E↑j
                 pop     si
                 pop     bp
                 retf    2
-sub_2C32A       endp
+container_count endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -64908,7 +64908,7 @@ loc_2DC6F:                              ; CODE XREF: sub_2DC11+13↑j
                 push    ds
                 push    ax
                 mov     cx, 3
-                call    sub_128B0
+                call    SCOPY@
                 mov     bx, si
                 shl     bx, 1
                 mov     ax, [bx-633Ch]
@@ -64969,7 +64969,7 @@ loc_2DCF4:                              ; CODE XREF: sub_2DC11+DE↑j
                 push    ss
                 push    ax
                 mov     cx, 3
-                call    sub_128B0
+                call    SCOPY@
 
 loc_2DD3C:                              ; CODE XREF: sub_2DC11+D9↑j
                 mov     bx, si
@@ -65832,7 +65832,7 @@ loc_2E302:                              ; CODE XREF: sub_2E283+46↑j
                 push    word ptr dword_44B70+2
                 push    ax
                 mov     cx, 3
-                call    sub_128B0
+                call    SCOPY@
                 mov     bx, [bp+var_2]
                 shl     bx, 1
                 shl     bx, 1
@@ -78622,7 +78622,7 @@ jpt_33EBF       dw offset loc_33EC4     ; DATA XREF: sub_33E5C+63↑r
 
 ; Attributes: bp-based frame
 
-sub_34097       proc far                ; CODE XREF: sub_159A9+83↑P
+sub_34097       proc far                ; CODE XREF: ask_quantity+83↑P
                                         ; sub_15BFE+1BD↑P ...
 
 var_6           = word ptr -6
@@ -80507,7 +80507,7 @@ jpt_34C97       dw offset loc_34CE3     ; DATA XREF: sub_34C4C+4B↑r
 
 ; Attributes: bp-based frame
 
-read_line       proc far                ; CODE XREF: sub_159A9+95↑P
+read_line       proc far                ; CODE XREF: ask_quantity+95↑P
                                         ; sub_23B5B+17↑P ...
 
 var_2           = word ptr -2
@@ -80629,7 +80629,7 @@ read_line       endp
 
 ; Attributes: bp-based frame
 
-sub_34F3F       proc far                ; CODE XREF: sub_13611+37E↑P
+define_text_window proc far             ; CODE XREF: sub_13611+37E↑P
                                         ; sub_13611+3C0↑P ...
 
 arg_0           = byte ptr  6
@@ -80667,7 +80667,7 @@ arg_8           = word ptr  0Eh
                 pop     si
                 pop     bp
                 retf    0Ah
-sub_34F3F       endp
+define_text_window endp
 
 
 ; =============== S U B R O U T I N E =======================================
@@ -81406,7 +81406,7 @@ sub_3546B       endp
 
 ; Attributes: bp-based frame
 
-sub_35517       proc far                ; CODE XREF: sub_159A9+103↑P
+sub_35517       proc far                ; CODE XREF: ask_quantity+103↑P
                                         ; sub_15BFE+50↑P ...
 
 var_A           = word ptr -0Ah
@@ -103217,13 +103217,13 @@ unk_3FB04       db  41h ; A             ; DATA XREF: start+22A↑o
                 db  0Dh
                 db  0Ah
 dword_3FB22     dd 0                    ; DATA XREF: sub_1016C+6↑w
-                                        ; sub_101AF+4↑r ...
+                                        ; __restorezero+4↑r ...
 dword_3FB26     dd 0                    ; DATA XREF: sub_1016C+13↑w
-                                        ; sub_101AF+F↑r ...
+                                        ; __restorezero+F↑r ...
 dword_3FB2A     dd 0                    ; DATA XREF: sub_1016C+20↑w
-                                        ; sub_101AF+1A↑r ...
+                                        ; __restorezero+1A↑r ...
 dword_3FB2E     dd 0                    ; DATA XREF: sub_1016C+2D↑w
-                                        ; sub_101AF+25↑r ...
+                                        ; __restorezero+25↑r ...
 word_3FB32      dw 0                    ; DATA XREF: start+F8↑r
                                         ; seg000:2C78↑w
 word_3FB34      dw 0                    ; DATA XREF: start+F4↑r
@@ -109548,7 +109548,7 @@ word_41544      dw 1AA5h                ; DATA XREF: sub_30A7B+6D↑r
                 db  0Ah
                 db    0
 byte_41634      db 0                    ; DATA XREF: cmd_look+1E7↑w
-                                        ; sub_159A9+79↑r ...
+                                        ; ask_quantity+79↑r ...
 byte_41635      db 0                    ; DATA XREF: sub_15BFE+1CC↑w
                                         ; cmd_move+739↑w ...
 byte_41636      db 0                    ; DATA XREF: sub_15BFE+1C9↑w
@@ -109642,7 +109642,7 @@ word_41680      dw 5                    ; DATA XREF: sub_33683+7D↑r
                 db    0
 word_4168B      dw 1BD2h                ; DATA XREF: seg001:025A↑r
                                         ; sub_13611+38C↑r ...
-byte_4168D      db 1                    ; DATA XREF: sub_34F3F+40↑r
+byte_4168D      db 1                    ; DATA XREF: define_text_window+40↑r
                 db    0
                 db 0DEh
                 db 0F6h
@@ -165833,7 +165833,7 @@ loc_50688:                              ; CODE XREF: sub_50651+12↑j
                 push    word ptr dword_4496A+2
                 push    dx
                 mov     cx, 3
-                call    sub_128B0
+                call    SCOPY@
                 mov     ax, [bp+var_4]
                 and     ax, 3FFh
                 mov     [bp+var_6], ax
@@ -172383,7 +172383,7 @@ arg_4           = word ptr  0Ah
                 mov     ax, 20F6h
                 push    ax
                 mov     cx, 0Dh
-                call    sub_128B0
+                call    SCOPY@
                 push    ss
                 lea     ax, [bp+var_24]
                 push    ax
@@ -172391,7 +172391,7 @@ arg_4           = word ptr  0Ah
                 mov     ax, 2103h
                 push    ax
                 mov     cx, 10h
-                call    sub_128B0
+                call    SCOPY@
                 mov     byte_422B5, 1
                 mov     ax, 1
                 push    ax
@@ -172726,7 +172726,7 @@ arg_0           = word ptr  6
                 mov     ax, 2113h
                 push    ax
                 mov     cx, 0Ah
-                call    sub_128B0
+                call    SCOPY@
                 mov     ax, 1
                 push    ax
                 call    sub_1FFCB
@@ -174531,7 +174531,7 @@ loc_54DEE:                              ; CODE XREF: scene_intermission_B+C7↓j
                 push    word ptr dword_4496A+2
                 push    dx
                 mov     cx, 3
-                call    sub_128B0
+                call    SCOPY@
                 push    si
                 mov     ax, [bp+var_A]
                 and     ax, 3FFh
@@ -174990,7 +174990,7 @@ arg_0           = word ptr  6
                 mov     ax, 213Fh
                 push    ax
                 mov     cx, 4
-                call    sub_128B0
+                call    SCOPY@
                 xor     di, di
                 push    ss
                 lea     ax, [bp+var_24]
@@ -174999,7 +174999,7 @@ arg_0           = word ptr  6
                 mov     ax, 2143h
                 push    ax
                 mov     cx, 12h
-                call    sub_128B0
+                call    SCOPY@
                 cmp     si, 1
                 jge     short loc_551CA
                 jmp     loc_553D7
@@ -176342,7 +176342,7 @@ loc_55C64:                              ; CODE XREF: sub_55BA0+10C↓j
 loc_55CA9:                              ; CODE XREF: sub_55BA0+C2↑j
                 cmp     di, [bp+var_6]
                 jl      short loc_55C64
-                call    sub_22360
+                call    hazard_flash
                 mov     ax, 19h
                 push    ax
                 call    play_sound_effect
@@ -187433,7 +187433,7 @@ loc_5B2F8:                              ; CODE XREF: recipe_radium+253↑j
 loc_5B324:                              ; CODE XREF: recipe_radium+268↑j
                 mov     [bp+var_8], 0
                 push    di
-                call    sub_159A9
+                call    ask_quantity
                 mov     [bp+var_8], ax
                 or      ax, ax
                 jnz     short loc_5B339
