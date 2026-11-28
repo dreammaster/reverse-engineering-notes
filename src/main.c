@@ -430,7 +430,7 @@ static int roomview_load_level(RoomView *rv, const GameFiles *g) {
 	if (getenv("CAD_SPELLS")) for (int t = 0; t < ACL_THINGS; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!sp || !rv->vm.present[t] || (sp->header[0x16] != 1 && sp->header[0x16] != 2 && sp->header[0x16] != 4)) continue; const uint8_t *a = rv->vm.tail[t];
 		fprintf(stderr, "SPELLTHING %d class %d A %02x %02x %02x %02x %02x %02x %02x %02x %02x\n", t, sp->header[0x16], a[0], a[1], a[2], a[3], a[4], a[5], a[6], a[7], a[8]); }
 	if (getenv("CAD_CARRYN")) { int n = atoi(getenv("CAD_CARRYN")); for (int t = 1; t < ACL_THINGS && n > 0; t++) { const ObjSprite *sp = thing_sprite(rv, t); if (!rv->vm.present[t] || !sp || !(sp->header[0x17] || sp->header[0x16] == 1 || sp->header[0x16] == 2) || sp->nframes < 1) continue; rv->vm.room[t] = 0xFF; rv->vm.flags[t] &= (uint8_t)~0x80; rv->last_item = t; rv->h_item = t; n--; } }   /* debugging aid: carry this many things from the start */
-	if (getenv("CAD_MOVE")) { int t = 0, x = 0, y = 0, rm = -1; if (sscanf(getenv("CAD_MOVE"), "%d:%d:%d:%d", &t, &x, &y, &rm) >= 3 && t > 0 && t < ACL_THINGS) { rv->vm.pos[3 * t] = (uint8_t)x; rv->vm.pos[3 * t + 1] = (uint8_t)y; if (rm >= 0) rv->vm.room[t] = (uint8_t)rm; } }   /* debugging aid: put a thing at x, y (and into a room) */
+	if (getenv("CAD_MOVE")) { int t = 0, x = 0, y = 0, rm = -1, mz = -1000; if (sscanf(getenv("CAD_MOVE"), "%d:%d:%d:%d:%d", &t, &x, &y, &rm, &mz) >= 3 && t > 0 && t < ACL_THINGS) { rv->vm.pos[3 * t] = (uint8_t)x; rv->vm.pos[3 * t + 1] = (uint8_t)y; if (mz != -1000) rv->vm.pos[3 * t + 2] = (uint8_t)mz; if (rm >= 0) rv->vm.room[t] = (uint8_t)rm; } }   /* debugging aid: put a thing at x, y (and into a room) */
 	if (getenv("CAD_SCRIPT")) { int t = atoi(getenv("CAD_SCRIPT")); const ObjSprite *q = thing_sprite(rv, t); if (q) { int n = anim_script_len(q); fprintf(stderr, "SCRIPT thing %d (%d words):", t, n); for (int i = 0; i < n; i++) { int cmd, arg; anim_script_word(q, i, &cmd, &arg); fprintf(stderr, " %02x%02x", cmd, arg); } fprintf(stderr, "\n"); } }       /* debugging aid: the animation script of a thing */
 	if (getenv("CAD_FINDF7")) { int want = atoi(getenv("CAD_FINDF7")); for (int t = 1; t < ACL_THINGS; t++) { const ObjSprite *q = thing_sprite(rv, t); if (!rv->vm.present[t] || !q) continue; int n = anim_script_len(q); for (int i = 0; i < n; i++) { int cmd, arg; anim_script_word(q, i, &cmd, &arg); if (cmd == 0xF7 && (want < 0 || arg == want)) { fprintf(stderr, "F7 %d: thing %d class %02x room %d tail1 %d flags %02x\n", arg, t, q->header[22], rv->vm.room[t], rv->vm.tail[t][1], rv->vm.flags[t]); } } } }       /* debugging aid: the things whose animation script runs action routine n (command F7 n) */
 	if (getenv("CAD_FINDBEH")) { int b = atoi(getenv("CAD_FINDBEH")); for (int t = 1; t < ACL_THINGS; t++) if (rv->vm.present[t] && rv->vm.tail[t][1] == b) { int len; const uint8_t *r = mp2_thing(&rv->mp2, t, &len); fprintf(stderr, "BEH thing %d room %d pos %d,%d,%d flags %02x nev %d\n", t, rv->vm.room[t], rv->vm.pos[3*t], rv->vm.pos[3*t+1], rv->vm.pos[3*t+2], rv->vm.flags[t], r ? r[11] : -1); } }       /* debugging aid: the things whose behaviour byte A[1] is n */
@@ -1687,6 +1687,7 @@ static void throw_held(Walker *wk, RoomView *rv) {
 }
 /* gravity (1000:1572B / 6BFC): a loose thing (sprite header byte 0Ch bit 0 set = non-solid, record flags2 bits 4 and 8 clear) that stands above the floor with nothing under it starts to fall */
 static void gravity_scan(Walker *wk, RoomView *rv) {
+	if (getenv("CAD_NOGRAV")) return;                          /* debugging aid: nothing starts to fall by itself (the original does not scan for unsupported things either) */
 	for (int i = 0; i < rv->ro.n && rv->nfly < 8; i++) {
 		const RoomObj *o = &rv->ro.o[i];
 		int t = o->thing, z = (int8_t)rv->vm.pos[3 * t + 2];
@@ -1724,14 +1725,52 @@ static void fly_step(Walker *wk, RoomView *rv) {
 			if (rv->fly[k].zi < 40) rv->fly[k].zi++;
 			if (nz == 0 && dz < 0) done = 1;
 		} else {
+			int pushed = 0;
+			/* 1000:16DAC..16E44: when the first thing hit is not solid (16B02: its flag is not negative) and the step moves horizontally, the group in the way is pushed by the horizontal
+			   delta (165A1 with the player's strength, 167DF applies it) and the step is tried again; a thing that cannot be pushed blocks as before */
+			if (nz >= 0 && (dx || dy) && cr.count != 0xFF && cr.count != 0xFE && cr.n >= 1 && cr.flag != 0xFD) {
+				static PushObj po[ROOMOBJS_MAX];
+				int self_i = -1, gx = 0, gy = 0, gw, gh;
+				for (int i = 0; i < rv->ro.n; i++) {
+					const RoomObj *o = &rv->ro.o[i];
+					po[i].x1 = o->x1; po[i].y1 = o->y1; po[i].z0 = o->z0; po[i].xs = o->xs; po[i].ys = o->ys; po[i].zs = o->zs; po[i].weight = o->weight;
+					if (o->thing == t) self_i = i;
+				}
+				if (self_i >= 0 && roomview_geom(rv, &gw, &gh, &gx, &gy)) {
+					int moved[PUSH_MAX], nm = 0;
+					int strength = acl_timer_active(&rv->vm, 0x28) ? 0xC7 : acl_timer_active(&rv->vm, 0x29) ? 10 : 50;
+					int stp = push_move(&wk->world, po, x, y, nz, xs, ys, zs, self_i, dx, dy, strength, moved, &nm);
+					if ((stp == PUSH_MOVED || stp == PUSH_FREE) && nm > 0) {
+						for (int q = 0; q < nm; q++) {
+							RoomObj *po2 = &rv->ro.o[moved[q]];
+							po2->x1 += dx; po2->y1 += dy;
+							roomobj_moved(po2, gx, gy);
+							int pt = po2->thing;
+							rv->vm.pos[3 * pt] = (uint8_t)po2->x1; rv->vm.pos[3 * pt + 1] = (uint8_t)po2->y1;
+							rv->pos_seen[3 * pt] = rv->vm.pos[3 * pt]; rv->pos_seen[3 * pt + 1] = rv->vm.pos[3 * pt + 1];
+							if (g_snd_log) fprintf(stderr, "FLYPUSH %d pushes thing %d to %d,%d\n", t, pt, po2->x1, po2->y1);
+						}
+						walker_sync_boxes(wk, rv);
+						pushed = 1;
+						collision_test(&wk->world, x + dx, y + dy, nz, xs, ys, zs, t, 0, &cr);
+					}
+				}
+			}
+			if (cr.zf) {                                                       /* free after the push: the step is applied (16E85) */
+				x += dx; y += dy; z = nz;
+				if (rv->fly[k].hi < 18) rv->fly[k].hi++;
+				if (rv->fly[k].zi < 40) rv->fly[k].zi++;
+				if (nz == 0 && dz < 0) done = 1;
+			} else {
 			if (nz >= 0) { nland = cr.n; for (int q = 0; q < cr.n; q++) land[q] = cr.ids[q]; }
-			if (rv->fly[k].fall && rv->fly[k].zi == 0) done = 1;             /* blocked at the very first entry of the fall path (the pointer equals FB8E): it rests here (16E74) */
+			if (rv->fly[k].fall && rv->fly[k].zi == 0) { if (!pushed) done = 1; }   /* blocked at the very first entry of the fall path (the pointer equals FB8E): it rests here (16E74), unless something was pushed (flag 10h: the path is kept and the step is tried again next step) */
 			else {
 				rv->fly[k].fall = 1; rv->fly[k].zi = 0; rv->fly[k].hi = 18;     /* 16E5D: the horizontal path is dropped and FB8E restarts */
 				dz = zfall[0]; nz = z + dz;
 				if (nz < 0) cr.zf = 0; else collision_test(&wk->world, x, y, nz, xs, ys, zs, t, 0, &cr);
 				if (cr.zf) { z = nz; rv->fly[k].zi = 1; if (nz == 0) done = 1; }
 				else done = 1;
+			}
 			}
 		}
 		rv->vm.pos[3 * t] = (uint8_t)x; rv->vm.pos[3 * t + 1] = (uint8_t)y; rv->vm.pos[3 * t + 2] = (uint8_t)z;
@@ -2700,6 +2739,16 @@ int main(int argc, char **argv) {
 					if (!strncmp(c, "money:", 6)) g_room.vm.money = (uint32_t)atoi(c + 6);
 					if (!strncmp(c, "tp:", 3)) { int tx = 0, ty = 0, tz = 0; if (sscanf(c + 3, "%d:%d:%d", &tx, &ty, &tz) >= 2) { g_walk.x1 = tx; g_walk.y1 = ty; g_walk.z = tz; } }   /* debugging aid: put the player at x, y (z) */
 					if (!strncmp(c, "unlock:", 7)) { int d = atoi(c + 7); if (d >= 0 && d < 400) g_room.vm.doorw[d] = 0; else if (d < 0) memset(g_room.vm.doorw, 0, sizeof(g_room.vm.doorw)); }   /* debugging aid: clear the lock word of door d */
+					if (!strncmp(c, "place:", 6)) {                              /* debugging aid: put thing T at x, y, z in the room now (place:T:x:y:z) */
+						int pt = 0, px = 0, py = 0, pz = 0, gw, gh, gx, gy;
+						if (sscanf(c + 6, "%d:%d:%d:%d", &pt, &px, &py, &pz) == 4 && roomview_geom(&g_room, &gw, &gh, &gx, &gy))
+							for (int oi = 0; oi < g_room.ro.n; oi++) if (g_room.ro.o[oi].thing == pt) {
+								RoomObj *po = &g_room.ro.o[oi]; po->x1 = px; po->y1 = py; po->z0 = pz; roomobj_moved(po, gx, gy);
+								g_room.vm.pos[3 * pt] = (uint8_t)px; g_room.vm.pos[3 * pt + 1] = (uint8_t)py; g_room.vm.pos[3 * pt + 2] = (uint8_t)pz;
+								g_room.pos_seen[3 * pt] = (uint8_t)px; g_room.pos_seen[3 * pt + 1] = (uint8_t)py; g_room.pos_seen[3 * pt + 2] = (uint8_t)pz;
+								walker_sync_boxes(&g_walk, &g_room);
+							}
+					}
 					if (!strncmp(c, "save", 4)) game_save(&g_walk, &g_room, -1);
 					if (!strncmp(c, "load", 4)) { game_load(&g_room, -1); load_scene(&g, scene, &scr); }
 					for (int n = atoi(colon + 1); n > 0; n--)
