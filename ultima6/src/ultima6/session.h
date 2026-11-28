@@ -196,6 +196,8 @@ public:
 	void mdBelt(bool pass);                        // sub_4EEB0: the conveyor belt of the factory
 	void mdTeleport(int pad);                      // sub_25CAC: the teleporting pads
 	void mdRaxachkScene();                         // sub_544F0: the person 0x66 is struck
+	void seBurn(int x, int y);                     // fire_start (sub_32B5E): the fire at a square
+	void seHazardEffect(int actor, int tile);      // sub_14338: what a hazard tile does to an actor
 	void seHazards();                              // sub_145A4 / sub_14338: the squares of Savage Empire
 	bool seWorktype(int actor);                    // sub_27211's own worktypes (7, 9, 10, 11, 19, 154)
 	void seAwaken();                               // sub_37566: the Avatar is dead (Savage Empire)
@@ -479,7 +481,6 @@ private:
 	void seStepOn();                                                            // sub_254F4: the ladders and stairs of Savage Empire
 	void seClimb(int idx);                                                      // sub_19505 for ropes and holes
 	bool seBurns(int type) const;                                               // sub_2E7A2
-	void seBurn(int x, int y);                                                  // sub_32B5E
 	void seFire();                                                              // sub_3215F
 	int sePackItem(int actor, int type) const;                                  // sub_1ADDA
 	int seRoll(int lo, int hi);                                                 // sub_3B58F

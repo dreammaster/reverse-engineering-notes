@@ -951,6 +951,21 @@ int main() {
 		w.deleteObject(door);
 	}
 
+	// a fire at a square (fire_burn) burns the web there and hurts the people on it (the tile 0x406: 1-15)
+	{
+		w.moveObject(w.actorObject(1), px, py, 0);
+		g.x = px;
+		g.y = py;
+		g.z = 0;
+		int web = put(w, 0x11, 0, px, py, 0);
+		int victim = w.actors.partyRoster[0];
+		w.actors.hp[victim] = 200;
+		w.actors.status[victim] &= 0xFE;
+		for (int i = 0; i < 40 && w.actors.hp[victim] == 200; ++i)
+			g.seBurn(px, py);
+		CHECK(w.objects[web].deleted && w.actors.hp[victim] < 200);
+	}
+
 	// Rest (sub_3A28B): "Rest until ...", N and a digit of hours; a member whose experience asks for the next level dreams of the three animals and B raises his strength
 	{
 		w.moveObject(w.actorObject(1), px, py, 0);

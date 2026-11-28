@@ -2013,6 +2013,9 @@ void Game::seBurn(int bx, int by) {
 		int fx = todo[k].first, fy = todo[k].second;
 		std::vector<int> here;
 		_world.objectsAt(fx, fy, z, here);
+		for (int i : here) // fire_burn: every person on the square feels the fire's tile (0x406: 1-15)
+			if (!_world.objects[i].deleted && _world.objects[i].actor >= 0)
+				seHazardEffect(_world.objects[i].actor, _world.baseTile.firstTile[0xF2] & (TileFlags::TILES - 1));
 		for (int i : here) {
 			World::Obj &c = _world.objects[i];
 			if (c.deleted || c.actor >= 0)
@@ -2501,29 +2504,7 @@ void Game::seHazards() {
 				continue;
 			hazard = tile;
 		}
-		bool protectedOne = (al.status[actor] & 1) != 0;
-		auto hurt = [&](int dmg) { _combat.applyDamage(actor, actor, dmg); };
-		if ((hazard >= 0x10 && hazard <= 0x1B) || hazard == 0xAA || hazard == 0xAB) {
-			if (!protectedOne && !(cls & 8))
-				hurt(seRoll(1, 40) * ((cls & 0x10) ? 2 : 1));
-		}
-		if (hazard >= 0x210 && hazard <= 0x219) {
-			int str = al.strength[actor] - (me.status & 0x40 ? 3 : 0) + (me.status & 0x80 ? 3 : 0);
-			str = std::max(1, std::min(30, str));
-			if (!protectedOne && str < seRoll(1, 30) && me.type != 0x150) {
-				al.status[actor] |= 2;
-				message(_combat.nameOf(actor) + " is stuck in a web!\n");
-			}
-		} else if (hazard == 0x3A7) {
-			if (me.type == 0x143 || me.type == 0x148)
-				hurt(seRoll(1, 7));
-		} else if (hazard == 0x383 || hazard == 0x406 || (hazard >= 0x42B && hazard <= 0x42F) || (hazard >= 0x434 && hazard <= 0x437)) {
-			if (!protectedOne && !(cls & 8))
-				hurt(seRoll(1, 15) * ((cls & 0x10) ? 2 : 1));
-		} else if (hazard >= 0x54A && hazard <= 0x54F) {
-			if (!protectedOne && me.type != 0x11A)
-				hurt(seRoll(1, 5));
-		}
+		seHazardEffect(actor, hazard);
 	}
 }
 
@@ -3320,6 +3301,46 @@ bool Game::seDream(int actor) {
 		return seRestRun();
 	});
 	return true;
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// sub_14338: what the tile (or the thing of that tile) that an actor stands on does to him: the lava tiles 0x10-0x1B, 0xAA and 0xAB burn for 1-40 (twice for a kind that burns twice as hard) unless
+// he is protected or immune, the webs 0x210-0x219 may paralyse him, 0x3A7 hurts the kinds 0x143 and 0x148, the fires and the like 1-15, 0x54A-0x54F 1-5
+void Game::seHazardEffect(int actor, int hazard) {
+	ObjList &al = _world.actors;
+	int k = _world.actorObject(actor);
+	if (k < 0)
+		return;
+	const World::Obj me = _world.objects[k];
+	int cls = MovementClasses::flags(MovementClasses::classOf(me.type));
+	bool protectedOne = (al.status[actor] & 1) != 0;
+	auto hurt = [&](int dmg) { _combat.applyDamage(actor, actor, dmg); };
+	if ((hazard >= 0x10 && hazard <= 0x1B) || hazard == 0xAA || hazard == 0xAB) {
+		if (!protectedOne && !(cls & 8))
+			hurt(seRoll(1, 40) * ((cls & 0x10) ? 2 : 1));
+	}
+	if (hazard >= 0x210 && hazard <= 0x219) {
+		int str = al.strength[actor] - (me.status & 0x40 ? 3 : 0) + (me.status & 0x80 ? 3 : 0);
+		str = std::max(1, std::min(30, str));
+		if (!protectedOne && str < seRoll(1, 30) && me.type != 0x150) {
+			al.status[actor] |= 2;
+			message(_combat.nameOf(actor) + " is stuck in a web!\n");
+		}
+	} else if (hazard == 0x3A7) {
+		if (me.type == 0x143 || me.type == 0x148)
+			hurt(seRoll(1, 7));
+	} else if (hazard == 0x383 || hazard == 0x406 || (hazard >= 0x42B && hazard <= 0x42F) || (hazard >= 0x434 && hazard <= 0x437)) {
+		if (!protectedOne && !(cls & 8))
+			hurt(seRoll(1, 15) * ((cls & 0x10) ? 2 : 1));
+	} else if (hazard >= 0x54A && hazard <= 0x54F) {
+		if (!protectedOne && me.type != 0x11A)
+			hurt(seRoll(1, 5));
+	}
 }
 
 } // namespace Ultima6
