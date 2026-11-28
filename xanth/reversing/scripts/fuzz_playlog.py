@@ -34,7 +34,15 @@ def clean(text):
 
 
 def load(path):
-    return open(path, "rb").read().decode("latin1").split(chr(10))
+    # a text that contains a line break continues on the next line of the log: such lines (not "step<TAB>...") belong to the previous record
+    out = []
+    for line in open(path, "rb").read().decode("latin1").split(chr(10)):
+        head = line.split(TAB)[0]
+        if out and not (head.split()[:1] and head.split()[0].isdigit() and TAB in line):
+            out[-1] += chr(10) + line
+        else:
+            out.append(line)
+    return out
 
 
 def main():

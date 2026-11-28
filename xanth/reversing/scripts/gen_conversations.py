@@ -16,7 +16,8 @@ def entry(o, enabled):
     fn = "nullptr"
     msg = 0
     if "msg" in o:
-        msg = 0xF0000000 | (o["msg"][0] << 16) | o["msg"][1]
+        # tag 0xF0: a message id (block, index); other tags (0x84 = the data segment): a far pointer to a string of the program, segment 0x84FC and the offset
+        msg = (o.get("tag", 0xF0) << 24) | (o["msg"][0] << 16) | o["msg"][1]
     else:
         fn = o["name"]
     return "{0x%08X, %s, 0x%04X, %d}" % (msg, fn, o["next"], enabled)
