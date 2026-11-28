@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Incremental parallel build of the reconstructed sources + one test (tests/deponia1/<name>.cpp).
-Usage: tools/tbuild.py <name.cpp> [-32] [-g] [-c] [-r] [--game NAME]   (-> build/tests-<bits>/<name>.exe; -r runs it from tests/deponia1/work;
---game NAME builds src/NAME instead of src/deponia1 (into build/tests-<bits>-NAME; nightoftherabbit with Lua 5.4);
+"""Incremental parallel build of the reconstructed sources + one test (tests/vis/<name>.cpp).
+Usage: tools/tbuild.py <name.cpp> [-32] [-g] [-c] [-r] [--game NAME]   (-> build/tests-<bits>/<name>.exe; -r runs it from tests/vis/work;
+--game NAME builds src/NAME instead of src/vis-5.0.1-2019 (NAME may be short, '5.0.3': see tools/vis_engines.py; into build/tests-<bits>-NAME; vis-5.0.3-2025 with Lua 5.4);
 -c builds with gcov coverage into build/tests-<bits>c, see tools/coverage.py)"""
 import os
 import subprocess
@@ -9,11 +9,15 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GAME = sys.argv[sys.argv.index("--game") + 1] if "--game" in sys.argv else "deponia1"
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import vis_engines
+
+GAME_ARG = sys.argv[sys.argv.index("--game") + 1] if "--game" in sys.argv else ""
+GAME = vis_engines.resolve(GAME_ARG)
 SRC = os.path.join(ROOT, "src", GAME)
-SCR = os.path.join(ROOT, "tests", "deponia1")
+SCR = os.path.join(ROOT, "tests", "vis")
 bits = 32 if "-32" in sys.argv else 64
-OBJ = os.path.join(ROOT, "build", "tests-%d%s%s" % (bits, "g" if "-g" in sys.argv else "c" if "-c" in sys.argv else "", "" if GAME == "deponia1" else "-" + GAME))
+OBJ = os.path.join(ROOT, "build", "tests-%d%s%s" % (bits, "g" if "-g" in sys.argv else "c" if "-c" in sys.argv else "", "" if GAME == vis_engines.DEFAULT else "-" + GAME))
 CXX = r"C:\mingw64\bin\g++.exe" if bits == 64 else r"C:\mingw32\bin\g++.exe"
 # (the 32-bit build counts in SSE like the 64-bit one and the original: the x87 registers round differently, which changes
 # the results of the comparisons in the geometry)
@@ -23,14 +27,14 @@ FLAGS = ["-std=c++17", "-Wall", "-Wextra", "-I", SRC, "-I", r"C:\dev\scummvm", "
 LUA_EXCLUDE = {"scummvm_file.cpp", "lua_persist.cpp", "lua_persistence_util.cpp", "lua_unpersist.cpp", "liolib.cpp", "loslib.cpp", "loadlib.cpp", "double_serialization.cpp"}
 LUA_SOURCES = [os.path.join(r"C:\dev\scummvm\common\lua", f) for f in sorted(os.listdir(r"C:\dev\scummvm\common\lua")) if f.endswith(".cpp") and f not in LUA_EXCLUDE] + ["C:/dev/visionnaire/tools/luashim/luashim.cpp"]
 
-if GAME == "nightoftherabbit":
+if GAME in vis_engines.LUA54:
     # (Night of the Rabbit's executable has Lua 5.4.0 linked in, not ScummVM's 5.1: third_party/lua54, every file built as C++ so that the names are the engine's)
     LUA_SOURCES = [os.path.join(TP, "lua54", "src", f) for f in sorted(os.listdir(os.path.join(TP, "lua54", "src"))) if f.endswith(".c")]
     FLAGS += ["-I", os.path.join(TP, "lua54", "src")]
 
 if not (os.path.exists(os.path.join(TPLIB, "libwebp.a")) and os.path.exists(os.path.join(TPLIB, "libfreetype.a")) and os.path.exists(os.path.join(TPLIB, "libharfbuzz.a")) and os.path.exists(os.path.join(TPLIB, "libvpx.a")) and os.path.exists(os.path.join(TPLIB, "libvorbis.a"))):
     subprocess.run([sys.executable, os.path.join(ROOT, "tools", "build_third_party.py")] + (["-32"] if bits == 32 else []), check=True)
-test = [a for a in sys.argv[1:] if not a.startswith("-") and a != GAME][0]
+test = [a for a in sys.argv[1:] if not a.startswith("-") and a != GAME_ARG][0]
 test = os.path.join(SCR, test) if not os.path.isabs(test) else test
 
 sources = []

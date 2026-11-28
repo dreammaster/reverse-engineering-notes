@@ -13,7 +13,7 @@ import csv
 import sys
 
 SRC = sys.argv[1] if len(sys.argv) > 1 else "manifest/xml_names.tsv"
-OUT = sys.argv[2] if len(sys.argv) > 2 else "src/deponia1/vstables/fieldIds.h"
+OUT = sys.argv[2] if len(sys.argv) > 2 else "src/vis-5.0.1-2019/vstables/fieldIds.h"
 
 seen = {}
 rows = []

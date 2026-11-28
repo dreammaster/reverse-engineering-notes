@@ -28,7 +28,7 @@ VP8 files). The headers in `libvpx/generated/` are what `configure --target=gene
 and `build/make/rtcd.pl --arch=generic` make (`vpx_version.h` by hand, "v1.7.0"), so that the library is built without `make`.
 
 `SDL2` is `include/`, `src/` and the CMake files of the release, built with cmake and ninja (`tools/build_third_party.py sdl2`) for the standalone player
-(`SDL=1 tools/build.sh deponia1`). The original has SDL2 ~2.0.4 (THIRD_PARTY.md); a newer 2.x is used because the old sources do not build with a current
+(`SDL=1 tools/build.sh 5.0.1-2019`). The original has SDL2 ~2.0.4 (THIRD_PARTY.md); a newer 2.x is used because the old sources do not build with a current
 compiler - the API the player uses is the same.
 
-`lua54` is `src/` of Lua 5.4.0 without `lua.c` and `luac.c`: the Lua of Night of the Rabbit's executable (its `$LuaVersion` string says "Lua 5.4.0  Copyright (C) 1994-2020"). The other games run Lua 5.1 (ScummVM's `common/lua`); `src/nightoftherabbit` is built against this one (`tools/tbuild.py ... --game nightoftherabbit`). The files are compiled as C++ (all of them, so that the names match the engine's); no change to the sources.
+`lua54` is `src/` of Lua 5.4.0 without `lua.c` and `luac.c`: the Lua of Night of the Rabbit's executable (its `$LuaVersion` string says "Lua 5.4.0  Copyright (C) 1994-2020"). The other games run Lua 5.1 (ScummVM's `common/lua`); `src/vis-5.0.3-2025` is built against this one (`tools/tbuild.py ... --game 5.0.3`). The files are compiled as C++ (all of them, so that the names match the engine's); no change to the sources.

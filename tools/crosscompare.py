@@ -32,6 +32,8 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import vis_engines
 OBJDUMP = os.environ.get("VIS_OBJDUMP", r"C:\mingw64\bin\objdump.exe")
 DEFAULT_ORIGINAL = r"D:\Games\ScummVM\Dev\games\Visionnaire\Deponia1-Linux\data\noarch\game\Deponia"
 
@@ -44,7 +46,7 @@ by_class = False
 callsdiff = None
 tag = ""
 filters = []
-game = "deponia1"
+game = vis_engines.DEFAULT
 i = 0
 while i < len(args):
     a = args[i]
@@ -69,8 +71,8 @@ while i < len(args):
         i += 1
     elif a.startswith("-"):
         sys.exit("unknown option " + a)
-    elif a in ("deponia1", "deponia2") or os.path.isdir(os.path.join(ROOT, "src", a)):
-        game = a
+    elif vis_engines.resolve(a, exact=True):
+        game = vis_engines.resolve(a)
     else:
         filters.append(a)
     i += 1

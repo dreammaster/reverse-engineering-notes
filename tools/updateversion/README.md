@@ -8,4 +8,4 @@ GCC threaded into jump chains on `cmp [rsp+0C78h+var_C54], imm`. These scripts c
 - `uvdump.py <hex version>` - the instructions only version V (not V+1) runs, i.e. the fix numbered V, with the
   field names of `fieldIds.h` next to the constants.
 
-The result is in `src/deponia1/vstables/visionaireGameUpgrade.cpp`. Everything is read.
+The result is in `src/vis-5.0.1-2019/vstables/visionaireGameUpgrade.cpp`. Everything is read.

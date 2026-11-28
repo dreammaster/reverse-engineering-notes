@@ -1,10 +1,10 @@
-"""Compares the fields that every OnCreate/OnInit of src/deponia1/vstables/recordCallbacks.cpp sets with the ones in the disassembly.
+"""Compares the fields that every OnCreate/OnInit of src/vis-5.0.1-2019/vstables/recordCallbacks.cpp sets with the ones in the disassembly.
 The generator (gen_callbacks.py) lost the last statement of the functions that end in a tail call (a jmp to SetValue); this finds them.
 (The name kVisionaireAdventure in the output is the annotation of the number 100: noise.)
 Usage: python tools/check_callbacks.py"""
 import re, subprocess, sys
 from collections import Counter
-src = open("src/deponia1/vstables/recordCallbacks.cpp", encoding="utf-8").read().replace("\r\n", "\n")
+src = open("src/vis-5.0.1-2019/vstables/recordCallbacks.cpp", encoding="utf-8").read().replace("\r\n", "\n")
 funcs = {}
 for m in re.finditer(r"^void (\w+)::(OnCreate|OnInit)\(TVisionaireObject \*\w*\) \{\n(.*?)^\}\n", src, re.M | re.S):
     funcs[(m.group(1), m.group(2))] = m.group(3)

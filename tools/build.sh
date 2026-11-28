@@ -1,25 +1,35 @@
 #!/usr/bin/env bash
-# Builds one game's reconstructed sources under src/<game>/ with a given
+# Builds one engine's reconstructed sources under src/<engine>/ (src/vis-<release>-<year>, see tools/vis_engines.py) with a given
 # MinGW g++, so we don't hand-maintain a growing file list as the directory
 # tree grows to mirror the recovered original layout (manifest/source_layout.tsv).
-# The files are compiled in parallel into build/<game>/ (only the ones that changed) and then linked.
+# The files are compiled in parallel into build/<engine>/ (only the ones that changed) and then linked.
 #
 # The Lua sources of ScummVM (common/lua) and the glue of tools/luashim are built in; the ScummVM tree is
 # $SCUMMVM_DIR (default /c/dev/scummvm).
 #
-# SDL=1 builds the standalone player with the real SDL2 (third_party/SDL2, -DUSE_REAL_SDL) into build/<game>-sdl/ and src/<game>/<game>_sdl.exe.
+# SDL=1 builds the standalone player with the real SDL2 (third_party/SDL2, -DUSE_REAL_SDL) into build/<engine>-sdl/ and src/<engine>/<engine>_sdl.exe.
 #
-# Usage: tools/build.sh <game> [g++ path] [extra g++ args...]
-#   tools/build.sh deponia1
-#   tools/build.sh deponia1 /c/mingw32/bin/g++.exe
+# Usage: tools/build.sh <engine> [g++ path] [extra g++ args...]   (the name of the tree, or a part of it that makes one: 5.0.3, 5.0.1-2019)
+#   tools/build.sh 5.0.1-2019
+#   tools/build.sh 5.0.1-2019 /c/mingw32/bin/g++.exe
 set -euo pipefail
 
-game="${1:?usage: build.sh <game> [g++ path] [extra args...]}"
+game="${1:?usage: build.sh <engine> [g++ path] [extra args...]}"
 gxx="${2:-/c/mingw64/bin/g++.exe}"
 shift $(( $# >= 2 ? 2 : 1 ))
 extra_args=("$@")
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# (a short name, such as 5.0.3, is the one tree whose name starts so: tools/vis_engines.py does the same)
+if [ ! -d "$repo_root/src/$game" ]; then
+    matches=("$repo_root"/src/vis-"$game"*/)
+    if [ ${#matches[@]} -eq 1 ] && [ -d "${matches[0]}" ]; then
+        game="$(basename "${matches[0]}")"
+    else
+        echo "no single source tree for '$game' under src/ (tools/vis_engines.py lists them)" >&2
+        exit 1
+    fi
+fi
 src_dir="$repo_root/src/$game"
 variant=""
 if [ "${SDL:-0}" = "1" ]; then variant="-sdl"; fi
@@ -39,7 +49,7 @@ lua_exclude="scummvm_file.cpp lua_persist.cpp lua_persistence_util.cpp lua_unper
 
 mapfile -t sources < <(find "$src_dir" -name '*.cpp' | sort)
 lua_flags=""
-if [ "$game" = "nightoftherabbit" ]; then
+if [ "$game" = "vis-5.0.3-2025" ]; then
     # (Night of the Rabbit's executable has Lua 5.4.0 linked in, not ScummVM's 5.1: third_party/lua54, every file built as C++ so that the
     # names are the engine's, as in tools/tbuild.py)
     for f in "$tp"/lua54/src/*.c; do

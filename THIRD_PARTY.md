@@ -2,7 +2,7 @@
 
 How this was found: the strings and symbol names of the 64-bit ELF `Deponia` (the GOG Linux release), the libraries shipped
 next to it (`libs64/`, `documents/licenses/readme.txt`), and what the game data (`data.vis`, 3109 files) actually uses
-(`tests/deponia1/datainventory.cpp` lists it; run it from the game directory). The versions marked ~ are inferred from
+(`tests/vis/datainventory.cpp` lists it; run it from the game directory). The versions marked ~ are inferred from
 which functions or files are present, not read from a version string.
 
 ## What is statically linked into the executable

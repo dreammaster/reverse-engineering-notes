@@ -71,7 +71,7 @@ called:
    that happen to compile to byte-identical code get merged under one
    arbitrary symbol. This is how we found `g_logfile` is really a
    `wxFileName` even though the "assignment" call site resolved to
-   `wxString::operator=` (see `src/deponia1/NOTES.md`).
+   `wxString::operator=` (see `src/vis-5.0.1-2019/NOTES.md`).
 2. **IDA FLIRT misidentification**: 110 otherwise-unrelated functions in
    this binary are labeled `ix86_override_options_after_change` (a real GCC
    *compiler-internal* function that has no business being in a game
@@ -98,7 +98,7 @@ called:
    template instantiations or COMDAT-folded duplicates placed elsewhere by
    the linker, not evidence the clustering heuristic is wrong in general.
 3. **Prioritize by what's actually reachable** - start from `main()`'s
-   direct dependencies (already stubbed in `src/deponia1`) and expand
+   direct dependencies (already stubbed in `src/vis-5.0.1-2019`) and expand
    outward through the call graph, rather than working strictly top-to-
    bottom through `proprietary_classes.tsv`, so there's always a compiling,
    runnable executable to check progress against.
@@ -106,7 +106,7 @@ called:
    as classes are tackled and commit the manifest alongside the code, so
    progress survives across sessions without re-deriving this survey.
 5. **Place a class's files to match `source_layout_summary.tsv` once it has
-   a confirmed entry there** (e.g. `TGameController` -> `src/deponia1/
+   a confirmed entry there** (e.g. `TGameController` -> `src/vis-5.0.1-2019/
    vsplayer/control/gameController.h`/`.cpp`), matching the recovered
    original directory and file name. Until a class has assert evidence,
    leave it at the top level of `src/<game>/` rather than guessing a

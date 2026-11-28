@@ -1,9 +1,16 @@
 # Versions of the engine and of the games
 
-The engine was shipped in many builds (per game, per platform, per patch) and `src/deponia1/` reconstructs one of them.
-What is known about the others, and where they differ, is tracked in `VERSIONS.md` (the matrix and how to look at a new
-build) and in `src/<game>/VERSIONS.md` (the details of each game). Add what you find there, with how you know it
-(executable, data, or a run of the reconstruction), whenever another build is looked at.
+The engine was shipped in many builds (per game, per platform, per patch) and `src/vis-5.0.1-2019/` reconstructs one of them.
+The source trees under `src/` are named after the **engine** they reconstruct, `src/vis-<release>-<year of the build>`
+(the release is the one of the string "Engine Version: %s (Build %d from Build date: %s)", the year that of the build date;
+`python tools/vis_engines.py` lists them and the tools accept a short name such as `5.0.3`), not after a game that happens to
+use it: there are over 160 games made with the engine. Each tree has a `README.md` that says which release, build number,
+project format version and games it is. What is known about the other builds, and where they differ, is tracked in
+`VERSIONS.md` (the matrix and how to look at a new build) and in the `VERSIONS.md` of each tree (the details; the games of the
+tree have their own sections, or files such as `VERSIONS-deponia2.md`). Add what you find there, with how you know it
+(executable, data, or a run of the reconstruction), whenever another build is looked at. A new engine build gets a new tree,
+named after its release and year; two builds of one release can differ (Deponia 1 and Deponia 4 are both 5.0.1, build 1189,
+built in 2019 and 2017, and their code is not the same).
 
 # Code style: ScummVM conventions
 

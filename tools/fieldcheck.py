@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lists, for every function of src/deponia1 whose original is found by its demangled symbol, the field constants (kXxx)
+"""Lists, for every function of src/vis-5.0.1-2019 whose original is found by its demangled symbol, the field constants (kXxx)
 that the C++ mentions and the assembly of that function does not (noise: enum values, inlined helpers).
 Run from the project folder: python tools/fieldcheck.py"""
 import re, subprocess, sys, glob
@@ -24,7 +24,7 @@ def asm_fields(start):
     cache[start] = f
     return f
 skip = ("graphicslib", "p2t", "WxStub", "SdlStub", "recordCallbacks", "records.cpp", "visionaireGameUpgrade", "playerCommands", "TGActionCommands")
-for fn in sorted(glob.glob("src/deponia1/**/*.cpp", recursive=True)):
+for fn in sorted(glob.glob("src/vis-5.0.1-2019/**/*.cpp", recursive=True)):
     if any(x in fn for x in skip): continue
     s = open(fn, encoding="utf-8", errors="replace").read().replace("\r\n", "\n")
     for m in re.finditer(r"\n(?![/#\s])[^\n;{}]*?(\w+::~?\w+)\(", s):
@@ -46,4 +46,4 @@ for fn in sorted(glob.glob("src/deponia1/**/*.cpp", recursive=True)):
             af |= asm_fields(st)
         cppOnly = sorted(cf - af)
         if cppOnly and af:
-            print("%s: %s\n    C++ only: %s" % (fn.replace("src/deponia1\\", ""), name, cppOnly))
+            print("%s: %s\n    C++ only: %s" % (fn.replace("src/vis-5.0.1-2019\\", ""), name, cppOnly))

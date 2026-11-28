@@ -42,7 +42,7 @@ def asm_pairs(start):
     return asm
 skip = ("graphicslib", "p2t", "WxStub", "SdlStub", "recordCallbacks", "records.cpp", "visionaireGameUpgrade", "playerCommands")
 rows = []; nf = 0; npairs = 0
-for fn in sorted(glob.glob("src/deponia1/**/*.cpp", recursive=True)):
+for fn in sorted(glob.glob("src/vis-5.0.1-2019/**/*.cpp", recursive=True)):
     if any(x in fn for x in skip): continue
     s = open(fn, encoding="utf-8", errors="replace").read().replace("\r\n", "\n")
     for m in re.finditer(r"\n(?![/#\s])[^\n;{}]*?(\w+::~?\w+)\(", s):
@@ -71,7 +71,7 @@ for fn in sorted(glob.glob("src/deponia1/**/*.cpp", recursive=True)):
             if field in asm:
                 npairs += 1
                 if not (evs & asm[field]):
-                    rows.append((fn.replace("src/deponia1\\", ""), name, field, sorted(evs), sorted(asm[field])))
+                    rows.append((fn.replace("src/vis-5.0.1-2019\\", ""), name, field, sorted(evs), sorted(asm[field])))
 for r in rows:
     print("%s: %s\n    %s  C++ %s  asm %s" % r)
 print(nf, "functions,", npairs, "pairs,", len(rows), "differences")

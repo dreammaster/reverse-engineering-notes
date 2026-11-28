@@ -4,7 +4,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ASM = os.path.join(ROOT, "Deponia_Linux.asm")
-FIELDS = os.path.join(ROOT, "src", "deponia1", "vstables", "fieldIds.h")
+FIELDS = os.path.join(ROOT, "src", "vis-5.0.1-2019", "vstables", "fieldIds.h")
 
 lines = open(ASM, encoding='utf-8', errors='replace').read().split('\n')[1508676:1523438]
 ins = []

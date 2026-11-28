@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lists the lines of a source file of src/deponia1 that no test ran (the tests built and run with -c, see coverage.py):
+"""Lists the lines of a source file of src/vis-5.0.1-2019 that no test ran (the tests built and run with -c, see coverage.py):
 python tools/uncovered.py <path-filter> [first-line last-line]"""
 import json
 import os
@@ -9,7 +9,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OBJ = os.path.join(ROOT, "build", "tests-64c")
 GCOV = r"C:\mingw64\bin\gcov.exe"
-SRC = os.path.join(ROOT, "src", "deponia1").replace("\\", "/").lower()
+SRC = os.path.join(ROOT, "src", "vis-5.0.1-2019").replace("\\", "/").lower()
 flt = sys.argv[1].lower()
 first = int(sys.argv[2]) if len(sys.argv) > 2 else 0
 last = int(sys.argv[3]) if len(sys.argv) > 3 else 10 ** 9

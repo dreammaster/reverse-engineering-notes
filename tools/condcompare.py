@@ -9,7 +9,7 @@ Usage: tools/condcompare.py <original.pkl> <objects directory> [-o out.tsv] [--f
   --first other.pkl    a third build (Deponia 1, -O2) whose sources the reconstruction was written from: a test is a candidate only when it
                        is also missing in that build (the original has it and neither the reconstruction nor the other build has it), or
                        the reconstruction has it, the other build has it and the original has not
-  objects directory    the objects of tools/crosscompile.py -O0 -X -fno-omit-frame-pointer --tag o0 (build/cross/deponia4-o0)
+  objects directory    the objects of tools/crosscompile.py -O0 -X -fno-omit-frame-pointer --tag o0 (build/cross/vis-5.0.1-2017-o0)
 A test is the split that it makes: `x > 16` and `x >= 17` are the same test; signed and unsigned are not told apart; tests against 0,
 and against numbers over 0xFFFFF (addresses), are left out. Functions with a jump table (a switch) in either are listed apart."""
 import collections

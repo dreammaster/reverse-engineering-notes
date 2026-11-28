@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Parallel, incremental build of one game's reconstructed sources (what tools/build.sh does one file at
 a time). Objects and dependency files go to build/<game>-<bits>/ (ignored by git).
-Usage: tools/pbuild.py [game] [-32] [-r]    e.g. tools/pbuild.py deponia1 -32 -r
+Usage: tools/pbuild.py [game] [-32] [-r]    e.g. tools/pbuild.py 5.0.1-2019 -32 -r
   -32  build with the 32-bit MinGW (C:\\mingw32); default is C:\\mingw64
   -r   run the program afterwards (the smoke test: it must exit with 0, or -1 = Init failed: there is no game file)"""
 import os
@@ -10,8 +10,10 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import vis_engines
 args = [a for a in sys.argv[1:] if not a.startswith("-")]
-game = args[0] if args else "deponia1"
+game = vis_engines.resolve(args[0] if args else "")
 bits = 32 if "-32" in sys.argv else 64
 SRC = os.path.join(ROOT, "src", game)
 OBJ = os.path.join(ROOT, "build", "%s-%d" % (game, bits))

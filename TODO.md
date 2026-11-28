@@ -8,7 +8,7 @@ find them all.
 
 ### TCAnimation: 3D-model and Spine skeleton animation kinds
 
-`src/deponia1/vscommon/canimation.{h,cpp}`; original `src/vscommon/canimation.cpp`.
+`src/vis-5.0.1-2019/vscommon/canimation.{h,cpp}`; original `src/vscommon/canimation.cpp`.
 
 The original `TCAnimation` plays three kinds of animation: sprite sequences,
 3D models (`ModelContainer`/`ModelAnimation`) and Spine skeletons
@@ -37,7 +37,7 @@ Until this is done, an animation of those kinds plays no sprites, and
 
 ### TGAnimation: the model and Spine branches (part of the item above)
 
-`src/deponia1/vsplayer/animationGame.{h,cpp}`; original
+`src/vis-5.0.1-2019/vsplayer/animationGame.{h,cpp}`; original
 `src/vsplayer/animationGame.cpp`.
 
 `TGAnimation` is layered on `TCAnimation` and has its own model/Spine branches,
@@ -57,7 +57,7 @@ start functions use) are reconstructed; `TCAnimation::IsModelAnimation()`/
 
 ### TVisionaireGame::UpdateVersion: the upgrades of older projects
 
-`src/deponia1/vstables/visionaireGame.cpp` and `visionaireGameUpgrade.cpp`; original
+`src/vis-5.0.1-2019/vstables/visionaireGame.cpp` and `visionaireGameUpgrade.cpp`; original
 `TVisionaireGame::UpdateVersion(int version, bool allAtOnce)`, asm 1508677-1523438 (14000 lines).
 
 The player upgrades the data of a game exported by an older editor on load. The function is a series of statements
@@ -66,12 +66,12 @@ every fix of 0x63-0xAC (`applyVersionFixes()`), the tail every version gets, and
 (`applyLateVersionFixes()`). The scripts that cut the function back into its fixes are in `tools/updateversion/`.
 Nothing of `UpdateVersion` is left out.
 
-The fixes have no data to be tested with (Deponia 1 is of the current version 0xBA); `tests/deponia1/upgradetest.cpp`
+The fixes have no data to be tested with (Deponia 1 is of the current version 0xBA); `tests/vis/upgradetest.cpp`
 runs them on a made-up game of an old version. Other Visionaire games (Edna & Harvey ...) are probably older.
 
 ### TGCharacter and TMCharacter: Spine skeletons and the matrix of the drawing
 
-`src/deponia1/TGCharacter.{h,cpp}`, `src/deponia1/TMCharacter.{h,cpp}`; original
+`src/vis-5.0.1-2019/TGCharacter.{h,cpp}`, `src/vis-5.0.1-2019/TMCharacter.{h,cpp}`; original
 `src/vsplayer/characterManaged.cpp` and the character file of `vsplayer`.
 
 Left out, for the same reason as the model/Spine items above:
@@ -90,7 +90,7 @@ Spine branches are done.
 
 ### TGObject: particles and shaders
 
-`src/deponia1/TGObject.{h,cpp}`; original `src/vsplayer/` (object file, not
+`src/vis-5.0.1-2019/TGObject.{h,cpp}`; original `src/vsplayer/` (object file, not
 assert-confirmed).
 
 Left out:
@@ -113,7 +113,7 @@ and `Draw(TParticleEmitter&, ...)`, `SetParticleMaterial`: asm 708150, 714258, 7
 
 ### The text engine: the speech and the glyphs
 
-`src/deponia1/TGText.cpp`, `src/deponia1/TSText.cpp`, `src/deponia1/vscommon/cfont.cpp`.
+`src/vis-5.0.1-2019/TGText.cpp`, `src/vis-5.0.1-2019/TSText.cpp`, `src/vis-5.0.1-2019/vscommon/cfont.cpp`.
 
 - (The sound manager's side of the speech signals is done: `TSoundInterface::Signal()`.)
 - Printing the glyphs is done (`TCFont::PrintText()`, `PrintTextLines()`, `EnsureSpriteLoaded()`: see NOTES.md), but it draws through
@@ -133,7 +133,7 @@ constants (`luaGlobals.cpp`), sprites (`luaSprite.cpp`), data objects and the ta
 commands, and the 49 commands of the player with `InitPlayerCommands()` (`vsplayer/scripting/playerCommands.cpp`).
 Missing:
 
-- `Init()` (not `InitScripts()`) calls `InitPlayerCommands()`, see "The player's start-up" in `src/deponia1/NOTES.md`. That function
+- `Init()` (not `InitScripts()`) calls `InitPlayerCommands()`, see "The player's start-up" in `src/vis-5.0.1-2019/NOTES.md`. That function
   calls `InitDrawLua()` (`sha1`, `graphics`, `system`, `setDelay`: `luaSystem.cpp`, `luaGraphics.cpp`). Missing are the Box2D
   bindings (`tolua_b2_open`, tolua++), the functions of `graphics` that need the card itself (`drawIndexed`, `clear`,
   `setupOffsets`, `createBuffer`, `createIndexBuffer`, `createFramebuffer`, `bindFramebuffer`,
@@ -167,7 +167,7 @@ missing elsewhere:
 
 ## TGraphicsInterface::FadeIn: what the backend draws
 
-`src/deponia1/graphicslib/graphics.cpp`. The time loop, the signals to the game (update, draw) and to the sounds, and the
+`src/vis-5.0.1-2019/graphicslib/graphics.cpp`. The time loop, the signals to the game (update, draw) and to the sounds, and the
 black-box fades (effects 1 and 2) and the iris (8 and 9) are reconstructed from asm 763382-764646. The pictures of the
 dissolve (effects 4, 5, 6 and 11) are the backend's: it reads `GetFadeEffect()`/`GetFadeProgress()` and calls
 `SetFadeDrawn(true)` when it drew them (the ScummVM port gives them). The 3D/GL parts of the original `TGraphicsOGL`

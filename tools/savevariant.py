@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Puts the data (VBIN) that tests/deponia1/savevariant.exe wrote into a savegame container again: the entries of a savegame are
+"""Puts the data (VBIN) that tests/vis/savevariant.exe wrote into a savegame container again: the entries of a savegame are
 the data and the screenshot; the data of the savegame `template` are replaced, the screenshot stays.
 Usage: tools/savevariant.py <template savegame.dat> <new data file> <output savegame.dat>"""
 import hashlib

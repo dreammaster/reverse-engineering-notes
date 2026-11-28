@@ -26,7 +26,7 @@ FIELDS = {}
 try:
     import os
     here = os.path.dirname(os.path.abspath(__file__))
-    with open(os.path.join(here, "..", "src", "deponia1", "vstables", "fieldIds.h"), encoding="utf-8") as ff:
+    with open(os.path.join(here, "..", "src", "vis-5.0.1-2019", "vstables", "fieldIds.h"), encoding="utf-8") as ff:
         for ln in ff:
             m = re.match(r"\s*(k\w+) = 0x([0-9A-F]+),", ln)
             if m:

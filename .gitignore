@@ -15,7 +15,7 @@ src/*/messages.log
 # parallel build output (tools/pbuild.py)
 build/
 /userdata/
-tests/deponia1/work/
+tests/vis/work/
 /hero.sav
 /roundtrip.ved
 *.sav

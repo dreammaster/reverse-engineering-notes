@@ -13,14 +13,14 @@ patched into their own header (this script does that idempotently).
 
 Writes src/<game>/vstables/records.h and records.cpp.
 
-Usage: python tools/gen_records.py [game dir, default src/deponia1]
+Usage: python tools/gen_records.py [game dir, default src/vis-5.0.1-2019]
 """
 import csv
 import os
 import re
 import sys
 
-GAME = sys.argv[1] if len(sys.argv) > 1 else "src/deponia1"
+GAME = sys.argv[1] if len(sys.argv) > 1 else "src/vis-5.0.1-2019"
 
 TYPE_NAMES = {0: "kBool", 1: "kInt", 2: "kString", 3: "kPath", 4: "kFloat", 5: "kUnused5", 6: "kRectList",
               7: "kSpriteList", 8: "kPointList", 9: "kStringList", 10: "kIntList", 11: "kPathList",

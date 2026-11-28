@@ -15,7 +15,7 @@ import os
 import re
 import sys
 
-ROOT = sys.argv[1] if len(sys.argv) > 1 else "src/deponia1"
+ROOT = sys.argv[1] if len(sys.argv) > 1 else "src/vis-5.0.1-2019"
 NAMES = sys.argv[2] if len(sys.argv) > 2 else "manifest/xml_names.tsv"
 
 ACCESSORS = ("GetBool|GetInt|GetFloat|GetStr|GetStrHolder|GetStrings|GetPath|GetLink|GetLinks|GetPoint|GetPoints|"

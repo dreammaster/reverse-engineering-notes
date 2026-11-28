@@ -15,6 +15,8 @@ import sys
 from concurrent.futures import ThreadPoolExecutor
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import vis_engines
 TOOLS = os.environ.get("VIS_CROSSTOOLS", r"C:\dev\crosstools")
 ZIG = os.path.join(TOOLS, "zigpkg", "ziglang", "zig.exe")
 SYS = os.path.join(TOOLS, "sysroot")
@@ -33,7 +35,7 @@ extra = []
 std = "-std=gnu++17"
 opt = "-O2"
 files = []
-game = "deponia1"
+game = vis_engines.DEFAULT
 i = 0
 while i < len(args):
     a = args[i]

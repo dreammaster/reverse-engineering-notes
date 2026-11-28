@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lists the functions of src/deponia1 that no test ever called.
+"""Lists the functions of src/vis-5.0.1-2019 that no test ever called.
 Build and run the tests with coverage first:  python tools/tbuild.py <test>.cpp -c -r   (for every test)
 then:  python tools/coverage.py [path-filter]     (-> the functions that were never called, by file, longest first)"""
 import json
@@ -10,7 +10,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OBJ = os.path.join(ROOT, "build", "tests-64c")
 GCOV = r"C:\mingw64\bin\gcov.exe"
-SRC = os.path.join(ROOT, "src", "deponia1").replace("\\", "/").lower()
+SRC = os.path.join(ROOT, "src", "vis-5.0.1-2019").replace("\\", "/").lower()
 flt = sys.argv[1].lower() if len(sys.argv) > 1 else ""
 
 functions = {}

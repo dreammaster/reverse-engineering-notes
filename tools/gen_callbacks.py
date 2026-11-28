@@ -14,7 +14,7 @@ it can be understood and marked with a FIXME comment listing what is missing, so
 it can be finished by hand; the list is printed at the end.
 
 Known defect: when a function ends in a tail call (a final `jmp ...SetValue`, which a
-compiler makes of the last statement) that statement is lost. src/deponia1 was fixed by hand;
+compiler makes of the last statement) that statement is lost. src/vis-5.0.1-2019 was fixed by hand;
 tools/check_callbacks.py compares the fields of the generated functions with the
 disassembly and finds such losses. Do not run this over a hand-edited recordCallbacks.cpp.
 
@@ -32,7 +32,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from asmdata import AsmData  # noqa: E402
 
 ASM = sys.argv[1] if len(sys.argv) > 1 else "Deponia_Linux.asm"
-GAME = sys.argv[2] if len(sys.argv) > 2 else "src/deponia1"
+GAME = sys.argv[2] if len(sys.argv) > 2 else "src/vis-5.0.1-2019"
 
 
 def const_names():

@@ -13,7 +13,7 @@ Usage: tools/emucompare.py <first exe> <second exe> [--headers DIR] [--filter TE
                   builds differs everywhere; for the others a difference is a difference of the code. Methods that call through a
                   pointer in the block (a virtual call, another object) fault and are skipped.
   --trials N      how many argument sets / random blocks for each method (10): a test against a number is only seen when a block has that number
-  --headers DIR   the sources whose `static` methods are tried too (default src/deponia4)
+  --headers DIR   the sources whose `static` methods are tried too (default src/vis-5.0.1-2017)
   --filter TEXT   only the functions whose demangled name contains TEXT
 Prints per function: same results on all inputs, or the first inputs that differ. Needs nm and c++filt on the PATH, and unicorn."""
 import math
@@ -525,7 +525,7 @@ def make_block(rng, index, safe=False, sparse=False):
 
 def main():
     args = sys.argv[1:]
-    headers = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src", "deponia4")
+    headers = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "src", "vis-5.0.1-2017")
     flt = ""
     only_list = "--list" in args
     methods = "--methods" in args
