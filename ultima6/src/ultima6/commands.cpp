@@ -310,15 +310,21 @@ void Game::timePlayed(int &years, int &months, int &days) const {
 void Game::readyObject(int idx) {
 	int actor = _world.actors.partyRoster[_member];
 	World::Obj &o = _world.objects[idx];
-	message("Ready-" + std::string(o.type == 0x5A ? "torch" : Describe::object(_world, o)) + "\n");
+	const bool se = _world.game == GameId::SavageEmpire; // sub_1F404
+	message("Ready-" + std::string(o.type == (se ? 0xD0 : 0x5A) || (se && o.type == 0xD1) ? "torch" : Describe::object(_world, o)) + "\n");
 	int cls = Equipment::slotClassOf(_world, idx);
 	if (cls < 0) {
 		message("\nCan't be readied!\n");
 		prompt();
 		return;
 	}
+	if (se && (o.type == 0x89 || o.type == 0x32 || o.type == 0x28) && actor != 7 && actor != 4 && actor != 1 && actor != 5) { // only the four who know them use the modern weapons
+		message("\n" + std::string((const char *)_world.actors.partyNames[_member]) + " can't use modern weapons!\n");
+		prompt();
+		return;
+	}
 	int bare = _world.flags.block3[o.type & (TileFlags::BLOCK3 - 1)];
-	if (bare + Equipment::readiedWeight(_world, actor) > _world.actors.strength[actor] * 10) {
+	if (!se && bare + Equipment::readiedWeight(_world, actor) > _world.actors.strength[actor] * 10) {
 		message("\nToo heavy!\n");
 		prompt();
 		return;
@@ -326,6 +332,15 @@ void Game::readyObject(int idx) {
 	Equipment::Slots slots = Equipment::of(_world, actor);
 	if (slots.object[Equipment::target(_world, slots, cls)] >= 0) {
 		message("\nNo place to put!\n");
+		prompt();
+		return;
+	}
+	if (se && _world.isStackable(o.type) && o.quantity > 1) { // one of a stack is readied, the rest stays in the pack
+		World::Obj one = o;
+		--o.quantity;
+		one.quantity = 1;
+		one.status = (uint8_t)((one.status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
+		_world.objects.push_back(one);
 		prompt();
 		return;
 	}
@@ -414,12 +429,12 @@ bool Game::inventoryKey(int key) {
 		if (_selected < count) {
 			World::Obj &o = _world.objects[_items[_selected]];
 			int actor = _world.actors.partyRoster[_member];
-			if (o.type == 90 && (o.frame & 1)) { // a lit torch: put it out
+			if (_world.game == GameId::Ultima6 && o.type == 90 && (o.frame & 1)) { // a lit torch: put it out
 				int idx = _items[_selected];
 				_world.deleteObject(idx);
 				_world.addToInventory(actor, 90, 0, 1);
 				message("\nA torch is doused.\n");
-			} else if (o.type == 90) { // light one of the torches, which burns for a while in the hand
+			} else if (_world.game == GameId::Ultima6 && o.type == 90) { // light one of the torches, which burns for a while in the hand
 				// use_torch (32661): both hands full means no light; the torch burns for 200 minutes (0xC8)
 				Equipment::Slots slots = Equipment::of(_world, actor);
 				if (slots.twoHanded || (slots.object[2] >= 0 && slots.object[5] >= 0)) {

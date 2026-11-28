@@ -966,6 +966,33 @@ int main() {
 		CHECK(w.objects[web].deleted && w.actors.hp[victim] < 200);
 	}
 
+	// Ready (sub_1F404): by the type of the thing (a torch 0xD0 in a hand, one of a stack of them), the modern weapons only for the four who know them
+	{
+		int who = w.actors.partyRoster[0];
+		std::vector<int> pack;
+		w.inventory(who, pack, false);
+		for (int i : pack)
+			w.deleteObject(i);
+		int spears = w.addToInventory(who, 0xD0, 0, 3);
+		g.log.clear();
+		g.handleKey('i');
+		g.handleKey(KEY_ENTER);
+		std::vector<int> after;
+		w.inventory(who, after, false);
+		int readied = 0, left = 0;
+		for (int i : after) {
+			if (w.objects[i].type != 0xD0)
+				continue;
+			if (w.objects[i].location() == ObjRecord::READIED)
+				readied += w.objects[i].quantity;
+			else
+				left += w.objects[i].quantity;
+		}
+		g.handleKey(KEY_ESC);
+		CHECK(readied == 1 && left == 2);
+		(void)spears;
+	}
+
 	// Rest (sub_3A28B): "Rest until ...", N and a digit of hours; a member whose experience asks for the next level dreams of the three animals and B raises his strength
 	{
 		w.moveObject(w.actorObject(1), px, py, 0);

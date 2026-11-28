@@ -62,10 +62,32 @@ static int mdSlotClass(int type) {
 	return -1;
 }
 
+// sub_1E5F3: where Savage Empire's things are worn is decided by the type: 0x54, 0x55 and 0x87 the neck (1), 7-9 the body (4), a list of eleven two-handed things (8: the bow 0x1F, 0x20, 0x22, 0x28,
+// the flintlock 0x32, 0x5E, 0x76, 0x80, 0x83, 0xAF and 0xD4), 2, 0xD-0xF and 0x43 the shield place (5), the 22 types of ds:08B3 one hand (2); the rest cannot be readied. There are no helmets, arm pieces or boots.
+static int seSlotClass(int type) {
+	static const uint16_t BIG[11] = {0x1F, 0x20, 0x22, 0x28, 0x32, 0x5E, 0x76, 0x80, 0x83, 0xAF, 0xD4};
+	static const uint16_t HAND[22] = {0x01, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x21, 0x25, 0x27, 0x2C, 0x34, 0x77, 0x89, 0xB1, 0xD0, 0xCE, 0xF0, 0x15, 0x8A, 0xD1, 0xF1};
+	if (type == 0x54 || type == 0x55 || type == 0x87)
+		return 1;
+	if (type >= 7 && type <= 9)
+		return 4;
+	for (uint16_t t : BIG)
+		if (t == type)
+			return 8;
+	if (type == 2 || (type >= 0xD && type <= 0xF) || type == 0x43)
+		return 5;
+	for (uint16_t t : HAND)
+		if (t == type)
+			return 2;
+	return -1;
+}
+
 int Equipment::slotClassOf(const World &world, int index) {
 	const World::Obj &o = world.objects[index];
 	if (world.game == GameId::MartianDreams)
 		return mdSlotClass(o.type);
+	if (world.game == GameId::SavageEmpire)
+		return seSlotClass(o.type);
 	return slotClass(world.baseTile.firstTile[o.type] + o.frame);
 }
 

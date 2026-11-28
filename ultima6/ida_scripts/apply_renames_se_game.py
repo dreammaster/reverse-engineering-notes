@@ -129,6 +129,8 @@ FUNCTIONS = [
     (0x18194, "read_line", '= Martian Dreams 34E71 (matched by instruction signature)'),
     (0x1F9EC, "party_member_name", '= Martian Dreams 56762 (matched by instruction signature)'),
     (0x285E0, "defence_value", '= Martian Dreams 18286 (matched by instruction signature)'),
+    (0x1E5F3, "slot_class_by_type", 'where a thing is worn, by its type: neck 1, body 4, two-handed 8, shield 5, one hand 2, else -1'),
+    (0x1F404, "cmd_ready", 'Ready: the slot class, the modern weapons for the four who know them, the hands, one of a stack'),
     # -- matched by instruction signature (tools/match_functions.py) --
     (0x27169, "request_talk", '= Martian Dreams 29C22 (matched by instruction signature)'),
     (0x101AF, "__restorezero", '= Ultima VI 101B0 (matched by instruction signature)'),
