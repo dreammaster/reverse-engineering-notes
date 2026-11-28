@@ -47,8 +47,12 @@ Game::Game(World &world) : scroll(22, 14, 17, 10), _world(world), _renderer(worl
 	_combat.beforeHurt = [this](int attacker, int defender) { return mdProtected(attacker, defender); };
 	_combat.onDying = [this](int actor) { mdDying(actor); };
 	_combat.onDeath = [this](int actor) { mdKilled(actor); };
-	if (_world.game == GameId::SavageEmpire)
+	if (_world.game == GameId::SavageEmpire) {
 		_creatures.ownTurn = [this](int actor) { return seWorktype(actor); };
+		_combat.onExplode = [this](int ex, int ey, bool device) { seExplode(ex, ey, device); };
+		_combat.onHurtThing = [this](int thing, int damage) { seHurtThing(thing, damage); };
+		_combat.onBurn = [this](int bx, int by) { seBurn(bx, by); };
+	}
 	if (_world.game == GameId::MartianDreams)
 		_creatures.ownTurn = [this](int actor) { return mdWorktype(actor); };
 		_creatures.dreaming = [this]() { return _mdDreaming; };

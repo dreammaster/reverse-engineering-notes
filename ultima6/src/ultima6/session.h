@@ -493,6 +493,7 @@ private:
 	int seMaxHp(int actor) const;                                               // sub_2872A: twice the strength and four times the level, 1 to 255
 	int seTimerLeft() const;
 	void seSetTimer(int minutes, int object);
+	void seAttackCommand(int attacker, int weapon, int tx, int ty);             // the Attack command's target and blow (sub_2B9E7)
 	void seAdvanceTime(int minutes);                                            // advance_time (sub_14746) of Savage Empire
 	void seActorMinute(int actor);                                              // what a minute does to one actor there
 	void seTorches(int actor, int minutes, bool &lit);                          // the lit torches the member holds burn down

@@ -846,5 +846,260 @@ bool Combat::applyDamage(int attacker, int defender, int damage) {
 	return false;
 }
 
+// sub_28E5B: what a blow at a square meets: the first living actor there (the topmost), else the topmost thing; its object index, -1 when the square is empty. `victim` is the actor, -1 for a thing.
+int Combat::seTargetObject(int attacker, int x, int y, int &victim) const {
+	victim = -1;
+	int ka = _world.actorObject(attacker);
+	if (ka < 0)
+		return -1;
+	std::vector<int> here;
+	_world.objectsAt(x, y, _world.objects[ka].z, here);
+	int thing = -1;
+	for (size_t i = here.size(); i-- > 0;) {
+		const World::Obj &o = _world.objects[here[i]];
+		if (o.deleted)
+			continue;
+		if (o.actor >= 0 && o.actor < 0x100) {
+			if (!(_world.actors.status[o.actor] & 0x10)) {
+				victim = o.actor;
+				return here[i];
+			}
+		} else if (thing < 0) {
+			thing = here[i];
+		}
+	}
+	return thing;
+}
+
+// sub_2F4CD: whether something that lands on the square is lost: the terrain is water (tiles 0xF-0x1B, 0xAA, 0xAB, sub_2E61C) or one of the 68 of the table at ds:0F80 (sub_29071), or
+// impassable (flags 1 and 2), and nothing at all lies there
+bool Combat::seLostAt(int z, int x, int y) const {
+	static const uint16_t HOLES[68] = {0x5,  0x6,  0x8,  0x9,  0xa,  0xb,  0xd,  0xe,  0x1e, 0x31, 0x32, 0x35, 0x36, 0x37, 0x3d, 0x3e, 0x3f, 0x62, 0x63, 0x64, 0x65, 0x67, 0x68, 0x69, 0x70, 0x71, 0x73, 0x74, 0x75, 0x76,
+									   0x77, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, 0x80, 0x83, 0x84, 0x85, 0x87, 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f, 0x93, 0x94, 0x96, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6,
+									   0xd7, 0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0xdf};
+	int tile = _world.map.tile(z, x, y) & 0xFF;
+	int f1 = _world.flags.flags1[tile & (TileFlags::TILES - 1)];
+	bool pit = (f1 & 1) && (f1 & 2);
+	if (!pit) {
+		pit = (tile >= 0xF && tile <= 0x1B) || tile == 0xAA || tile == 0xAB;
+		for (uint16_t h : HOLES)
+			pit |= h == tile;
+	}
+	if (!pit)
+		return false;
+	std::vector<int> there;
+	_world.objectsAt(x, y, z, there);
+	for (int i : there)
+		if (!_world.objects[i].deleted)
+			return false;
+	return true;
+}
+
+// Savage Empire's attack_with_weapon (sub_2B47D) with the flight and the leavings of sub_29B5A. A blow at a square: what stands there is found (a person, else a thing); the black staff (0x15) is
+// charged (quality 1) against the kinds 0x143 and 0x148; beyond the weapon's reach 2 is the answer ("Out of range!"); a web is struck only by the lit torch (0xD1) or a grenade (0x89, 0x8A), a tree
+// (0x107) only by the fire axe (0x76) or a grenade, else 3 ("Not possible."); the weapons that want ammunition do nothing without it (a flintlock that is not loaded either). The weapons that shoot or
+// throw, and every blow from more than a square off, fly: the path stops at the first thing that stops a missile (World::boltPath) and what is there takes the blow. What a missile leaves: the bow's
+// arrow (0x2D), the sling's stone (0x29), the blowgun's dart (0x24) are used up (a stack loses one); the thrown spear (0x25) lands as the last of its stack (lost in water or a pit); the spear (1, 0x1A),
+// the axe (0x1B) and 0x2C thrown from the hand land where they went (the next of the same kind in the pack takes their place in the hand); a grenade (0x89, 0x8A) or a device (0xF0, 0xF1) goes
+// off where it lands (the next plain one takes its place); the flintlock is empty after its shot. A blow that finds a person hits as the test says (hitCheck), then the spear of Shamap kills
+// (a 0x126 only sleeps), the blowgun's dart poisons one time in two, the lit torch sets a web afire, anything else is a `strike`; a thing that is struck loses what the blow rolls (onHurtThing).
+// APPROX(115): the flight is boltPath (the original's sub_37A40 animation and its arrays are not traced), the sounds of each weapon (sub_37658), the boomerang's return flight, the reload of sub_31E67
+// and the story flags (word_3FE2D 0x90-0x92) are not done; hit_roll's result is never tested for a miss by the original's code as read (only for -1), here a miss does no harm as in Ultima VI
+int Combat::seAttack(int attacker, int weapon, int tx, int ty, bool commanded, int aimed) {
+	ObjList &al = _world.actors;
+	int ka = _world.actorObject(attacker);
+	if (ka < 0)
+		return 0;
+	const int ax = _world.objects[ka].x, ay = _world.objects[ka].y, az = _world.objects[ka].z;
+	int widx = -1;
+	{
+		std::vector<int> inv;
+		_world.inventory(attacker, inv, false);
+		for (int i : inv)
+			if (_world.objects[i].type == weapon && _world.objects[i].location() == ObjRecord::READIED) {
+				widx = i;
+				break;
+			}
+	}
+	int victim = -1;
+	int tobj = seTargetObject(attacker, tx, ty, victim);
+	if (aimed >= 0 && aimed != victim && _world.actorObject(aimed) >= 0) { // the target a fighter has chosen, when it is on that square
+		int ko = _world.actorObject(aimed);
+		if (_world.objects[ko].x == tx && _world.objects[ko].y == ty) {
+			victim = aimed;
+			tobj = ko;
+		}
+	}
+	int ttype = tobj >= 0 ? _world.objects[tobj].type : -1;
+	if (weapon == 0x15 && widx >= 0)
+		_world.objects[widx].quality = (ttype == 0x143 || ttype == 0x148) ? 1 : 0;
+	int d = distance(std::abs(tx - ax), std::abs(ty - ay));
+	const bool charged = weapon == 0x15 && widx >= 0 && _world.objects[widx].quality == 1;
+	const int range = charged ? 7 : rangeOf(weapon);
+	if (range < d)
+		return 2;
+	if (ttype == 0x11 && weapon != 0xD1 && weapon != 0x89 && weapon != 0x8A)
+		return 3;
+	if (ttype == 0x107 && weapon != 0x89 && weapon != 0x8A && weapon != 0x76)
+		return 3;
+	// sub_1ADDA: the first thing of the type in the pack (not in the hands)
+	auto packItem = [&](int type) {
+		std::vector<int> inv;
+		_world.inventory(attacker, inv, false);
+		for (int i : inv)
+			if (_world.objects[i].type == type && _world.objects[i].location() != ObjRecord::READIED && !_world.objects[i].deleted)
+				return i;
+		return -1;
+	};
+	const int ammo = seAmmo(weapon);
+	if (ammo && packItem(ammo) < 0)
+		return 0;
+	if (weapon == 0x32 && widx >= 0 && _world.objects[widx].frame == 0)
+		return 0;
+	bool missile = d > 1 || charged;
+	for (int m : {0x1F, 0x32, 0x28, 0x25, 0x20, 0x89, 0xF0, 0x27, 0x8A, 0xF1})
+		missile |= weapon == m;
+	int maxDamage = weaponDamageOf(weapon);
+	if (maxDamage < 0) {
+		const CreatureStats *own = stats(weapon);
+		maxDamage = own ? own->dmg : 1;
+	}
+	if (maxDamage < 0)
+		maxDamage = 1;
+	int hit = -1;
+	if (tobj >= 0 && victim >= 0)
+		hit = hitCheck(attacker, victim, weapon) ? 1 : 0;
+	auto place = [&](int obj, int x, int y) { // sub_1C246: a thing is put down on a square
+		World::Obj &o = _world.objects[obj];
+		o.status = (uint8_t)((o.status & ~ObjRecord::LOCATION_MASK) | 0x01);
+		o.parent = -1;
+		o.x = (uint16_t)x;
+		o.y = (uint16_t)y;
+		o.z = (uint8_t)az;
+		_world.addToMap(obj);
+	};
+	auto lessOne = [&](int obj) { // a stack loses one, a single thing is gone
+		if (_world.isStackable(_world.objects[obj].type) && _world.objects[obj].quantity > 1)
+			--_world.objects[obj].quantity;
+		else
+			_world.deleteObject(obj);
+	};
+	auto rearm = [&](int type) { // the next one of the kind in the pack is put in the hand (give_to_pack with status 0x18)
+		int spare = packItem(type);
+		if (spare < 0)
+			return;
+		lessOne(spare);
+		int fresh = _world.addToInventory(attacker, type, 0, 1);
+		if (fresh >= 0)
+			_world.objects[fresh].status = (uint8_t)((_world.objects[fresh].status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
+	};
+	int lx = tx, ly = ty, thrown = -1;
+	if (missile) {
+		std::vector<std::pair<int, int>> path;
+		if (!_world.boltPath(az, ax, ay, tx, ty, range, path)) {
+			lx = path.empty() ? ax : path.back().first;
+			ly = path.empty() ? ay : path.back().second;
+			tobj = seTargetObject(attacker, lx, ly, victim);
+			ttype = tobj >= 0 ? _world.objects[tobj].type : -1;
+		}
+		switch (weapon) {
+		case 0x1F:
+		case 0x28:
+		case 0x20:
+		case 0x25: {
+			int spare = packItem(ammo);
+			if (spare >= 0) {
+				if (_world.objects[spare].quantity > 1 && _world.isStackable(_world.objects[spare].type))
+					--_world.objects[spare].quantity;
+				else if (weapon == 0x25 && !seLostAt(az, lx, ly))
+					place(spare, lx, ly);
+				else
+					_world.deleteObject(spare);
+			}
+			break;
+		}
+		case 0x32:
+			if (widx >= 0)
+				_world.objects[widx].frame = 0; // the flintlock is empty
+			break;
+		case 1:
+		case 0x1A:
+		case 0x1B:
+		case 0x2C:
+			if (widx >= 0) {
+				rearm(weapon);
+				if (tobj >= 0 || !seLostAt(az, lx, ly)) {
+					place(widx, lx, ly);
+					thrown = widx;
+				} else {
+					_world.deleteObject(widx);
+				}
+				widx = -1;
+			}
+			break;
+		case 0x89:
+		case 0x8A:
+		case 0xF0:
+		case 0xF1:
+			if (widx >= 0) {
+				_world.deleteObject(widx);
+				widx = -1;
+			}
+			if (onExplode)
+				onExplode(lx, ly, weapon == 0xF0 || weapon == 0xF1);
+			rearm(weapon == 0x8A ? 0x89 : weapon == 0xF1 ? 0xF0 : weapon);
+			break;
+		default:
+			break;
+		}
+	}
+	if (hit == -1) { // nobody was aimed at: whoever stands where the missile came down is
+		hit = 1;
+		if (tobj >= 0 && victim >= 0)
+			hit = hitCheck(attacker, victim, weapon) ? 1 : 0;
+	}
+	if (tobj < 0 || hit == 0 || victim == attacker)
+		return 0;
+	if (victim < 0) { // a thing
+		if (ttype == 0x11 && weapon == 0xD1) {
+			if (onBurn)
+				onBurn(_world.objects[tobj].x, _world.objects[tobj].y);
+		} else if (onHurtThing) {
+			onHurtThing(tobj, roll(1, std::max(1, maxDamage)));
+		}
+		return 0;
+	}
+	if (weapon == 1) { // the spear of Shamap kills what it hits (a 0x126 only falls asleep) and is a plain spear afterwards
+		int sp = thrown;
+		if (sp < 0) {
+			std::vector<int> held;
+			_world.inventory(attacker, held, false);
+			for (int i : held)
+				if (_world.objects[i].type == 1 && _world.objects[i].location() == ObjRecord::READIED) {
+					sp = i;
+					break;
+				}
+		}
+		if (sp >= 0) {
+			_world.objects[sp].type = 0x1A;
+			_world.objects[sp].frame = 0;
+			_world.objects[sp].quantity = 1;
+		}
+		if (_world.objects[tobj].type == 0x126) {
+			al.status[victim] |= 0x04;
+			return 0;
+		}
+		applyDamage(attacker, victim, al.hp[victim]);
+		return 0;
+	}
+	if (weapon == 0x20 && roll(0, 1) != 0 && !(al.status[victim] & 1) && !seInvulnerable(_world, victim)) {
+		_scroll.print(nameOf(victim) + " poisoned!\n");
+		al.status[victim] |= 0x08;
+		return 0;
+	}
+	strike(attacker, victim, maxDamage, commanded);
+	return 0;
+}
+
 } // namespace Ultima6
 } // namespace Ultima6

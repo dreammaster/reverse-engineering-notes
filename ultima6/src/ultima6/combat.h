@@ -44,6 +44,12 @@ public:
 	std::function<void(int, int)> onSfx;
 	/** Called when a blow is struck with a weapon that is not a missile (perform_attack 2D63A), with the one it is struck at. */
 	std::function<void(int)> onSwing;
+	/** Savage Empire: a lit grenade or device goes off at (x, y) (explode_grenade, explode_device; the flag says device). */
+	std::function<void(int, int, bool)> onExplode;
+	/** Savage Empire: a thing (an object index) is struck for so much (sub_2A99B on a thing: trees, webs ...). */
+	std::function<void(int, int)> onHurtThing;
+	/** Savage Empire: a lit torch sets the web at (x, y) afire. */
+	std::function<void(int, int)> onBurn;
 	/** Called once an actor has died (the dream scenes of Martian Dreams count the deaths, sub_19300). */
 	std::function<bool(int, int)> beforeHurt; // (attacker, defender): true when the blow is taken by the game (a person the story keeps alive)
 	std::function<void(int)> onDying; // called as an actor is about to die (its body is still as it was)
@@ -86,6 +92,9 @@ public:
 	bool attack(int attacker, int defender);
 	/** The same with a chosen weapon type (the attacker's own type for bare hands, the ship for cannons). */
 	bool attackWith(int attacker, int defender, int weapon, bool commanded = false);
+	/** Savage Empire's attack_with_weapon (sub_2B47D) and the flight of sub_29B5A: `weapon` (a type; the attacker's own for bare hands) at the square (tx, ty): 2 out of range, 3 not possible, else 0. `aimed` is the actor a fighter has chosen (target_object); -1 takes what stands there. */
+	int seAttack(int attacker, int weapon, int tx, int ty, bool commanded, int aimed = -1);
+	int seTargetObject(int attacker, int x, int y, int &victim) const; // sub_28E5B: the living actor on a square, else the topmost thing (its object index); -1 for none
 	/** sub_2CD10: a blow of `damage` (the most it can do: a number from 1 to it is rolled; -1 for 1) at a target by an attacker, with what comes of it. */
 	bool strike(int attacker, int target, int damage, bool commanded);
 	/** sub_2B827: whether `target` can be attacked by `actor` (visible, free, the same level). */
@@ -105,6 +114,7 @@ public:
 	void die(int actor);
 
 private:
+	bool seLostAt(int z, int x, int y) const;                          // sub_2F4CD: a thing that lands there is lost (water, a pit, an empty square of a hole)
 	bool hitCheck(int attacker, int defender, int weapon);
 	void dieInner(int actor);
 	int roll(int lo, int hi) {

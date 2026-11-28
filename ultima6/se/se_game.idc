@@ -6731,6 +6731,7 @@ static Bytes_1(void) {
 	create_insn	(x=0X1ADC1);
 	op_hex		(x,	1);
 	create_insn	(0X1ADDA);
+	set_name	(0X1ADDA,	"find_pack_item");
 	create_insn	(x=0X1ADE1);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X1ADE6);
@@ -12767,8 +12768,6 @@ static Bytes_1(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X23008);
 	op_stkvar	(x,	1);
-	create_insn	(x=0X23016);
-	op_hex		(x,	1);
 }
 
 //------------------------------------------------------------------------
@@ -12778,6 +12777,8 @@ static Bytes_2(void) {
         auto x;
 #define id x
 
+	create_insn	(x=0X23016);
+	op_hex		(x,	1);
 	create_insn	(x=0X23019);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2301C);
@@ -17704,6 +17705,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X28E26);
 	op_stkvar	(x,	1);
 	create_insn	(0X28E5B);
+	set_name	(0X28E5B,	"target_at_square");
 	create_insn	(x=0X28E5E);
 	op_hex		(x,	1);
 	create_insn	(x=0X28E63);
@@ -17806,6 +17808,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X29058);
 	op_stkvar	(x,	0);
 	create_insn	(0X29071);
+	set_name	(0X29071,	"is_hole_tile");
 	create_insn	(0X29079);
 	create_insn	(x=0X2907B);
 	op_hex		(x,	1);
@@ -18354,6 +18357,7 @@ static Bytes_2(void) {
 	create_insn	(x=0X29B41);
 	op_stkvar	(x,	0);
 	create_insn	(0X29B5A);
+	set_name	(0X29B5A,	"fire_missile");
 	create_insn	(x=0X29B5D);
 	op_hex		(x,	1);
 	create_insn	(x=0X29B62);
@@ -19288,6 +19292,15 @@ static Bytes_2(void) {
 	op_hex		(x,	1);
 	create_insn	(x=0X2AF37);
 	op_hex		(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_3(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X2AF3C);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2AF3F);
@@ -19299,15 +19312,6 @@ static Bytes_2(void) {
 	create_insn	(0X2AF89);
 	create_insn	(x=0X2AF8B);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_3(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X2AF8E);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X2AF99);
@@ -19502,6 +19506,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X2B415);
 	op_stkvar	(x,	0);
 	create_insn	(0X2B429);
+	set_name	(0X2B429,	"owner_of_object");
 	create_insn	(x=0X2B42E);
 	op_stkvar	(x,	1);
 	create_insn	(0X2B43A);
@@ -19780,6 +19785,7 @@ static Bytes_3(void) {
 	create_insn	(x=0X2B9E0);
 	op_hex		(x,	1);
 	create_insn	(0X2B9E7);
+	set_name	(0X2B9E7,	"attack_target_with_weapon");
 	create_insn	(x=0X2B9EA);
 	op_hex		(x,	1);
 	create_insn	(x=0X2BA05);
@@ -22063,6 +22069,7 @@ static Bytes_3(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X2E615);
 	create_insn	(0X2E61C);
+	set_name	(0X2E61C,	"is_water_tile");
 	create_insn	(x=0X2E620);
 	op_stkvar	(x,	1);
 	create_insn	(0X2E63E);
@@ -22617,6 +22624,7 @@ static Bytes_3(void) {
 	op_hex		(x,	1);
 	create_insn	(0X2F4B9);
 	create_insn	(0X2F4CD);
+	set_name	(0X2F4CD,	"thing_lost_at");
 	create_insn	(x=0X2F4D2);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X2F4D5);
@@ -25826,6 +25834,15 @@ static Bytes_3(void) {
 	create_insn	(x=0X348CA);
 	op_hex		(x,	1);
 	create_insn	(0X348D2);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_4(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X348F3);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X348FA);
@@ -25850,15 +25867,6 @@ static Bytes_3(void) {
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3497A);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_4(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X34986);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X34989);
@@ -27732,6 +27740,7 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(0X37A38);
 	create_insn	(0X37A40);
+	set_name	(0X37A40,	"fly_missile");
 	create_insn	(x=0X37A43);
 	op_hex		(x,	1);
 	create_insn	(x=0X37A49);
@@ -32053,6 +32062,15 @@ static Bytes_4(void) {
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3DDDE);
 	op_stkvar	(x,	1);
+}
+
+//------------------------------------------------------------------------
+// Information about bytes
+
+static Bytes_5(void) {
+        auto x;
+#define id x
+
 	create_insn	(x=0X3DDF1);
 	op_stkvar	(x,	0);
 	create_insn	(x=0X3DDF4);
@@ -32078,15 +32096,6 @@ static Bytes_4(void) {
 	create_insn	(0X3DE30);
 	create_insn	(x=0X3DE3B);
 	op_stkvar	(x,	1);
-}
-
-//------------------------------------------------------------------------
-// Information about bytes
-
-static Bytes_5(void) {
-        auto x;
-#define id x
-
 	create_insn	(x=0X3DE3E);
 	op_stkvar	(x,	1);
 	create_insn	(x=0X3DE45);

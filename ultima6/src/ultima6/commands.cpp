@@ -187,6 +187,10 @@ void Game::attackAt(int tx, int ty) {
 	}
 	int target = -1;
 	std::vector<int> here;
+	if (seGame && !done) { // sub_2B9E7 and attack_with_weapon: the square is named and the blow goes there, person, thing or nothing
+		seAttackCommand(attacker, weapon, tx, ty);
+		done = true;
+	}
 	if (!done) {
 		_world.objectsAt(tx, ty, z, here);
 		for (int i : here)
@@ -206,22 +210,6 @@ void Game::attackAt(int tx, int ty) {
 				sfx(0xC);
 			} else {
 				mdHitThing(attacker, thing, weapon);
-			}
-		} else if (seGame && (seFind(0x11, tx, ty) >= 0 || seFind(0x107, tx, ty) >= 0)) { // attack_with_weapon: a web is struck only by a lit torch (0xD1, which sets it afire) or a grenade, a tree (0x107) only by the fire axe (0x76) or a grenade
-			bool web = seFind(0x11, tx, ty) >= 0;
-			int thing = seFind(web ? 0x11 : 0x107, tx, ty);
-			message(Describe::object(_world, _world.objects[thing]) + ".\n");
-			const World::Obj &me = _world.objects[_world.actorObject(attacker)];
-			if (std::max(std::abs(tx - me.x), std::abs(ty - me.y)) > Combat::rangeOf(weapon)) {
-				message("Out of range!\n");
-				sfx(0xC);
-			} else if (web && weapon == 0xD1) {
-				seBurn(tx, ty);
-			} else if (!web && weapon == 0x76) {
-				int most = Combat::weaponDamageOf(weapon);
-				seHurtThing(thing, most <= 1 ? 1 : seRoll(1, most));
-			} else if (weapon != 0x89 && weapon != 0x8A) {
-				message("No effect.\n");
 			}
 		} else {
 			message("nothing!\n");
@@ -267,8 +255,6 @@ void Game::attackAt(int tx, int ty) {
 					message("Out of ammunition!\n");
 			} else {
 				_combat.attackWith(attacker, target, weapon, true);
-				if (seGame && weapon == 0x32 && weaponIdx >= 0)
-					_world.objects[weaponIdx].frame = 0; // the flintlock is empty
 			}
 		}
 	}

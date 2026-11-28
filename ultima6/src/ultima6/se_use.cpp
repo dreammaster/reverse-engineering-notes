@@ -2231,7 +2231,7 @@ bool Game::seWorktype(int actor) {
 			return true;
 		}
 		if (d <= 1 || _creatures.lineOfFire(actor, tx, ty, range)) {
-			_combat.attackWith(actor, t, weapon, false);
+			_combat.seAttack(actor, weapon, tx, ty, false, t);
 			_world.spendMoves(actor, 10);
 			return true;
 		}
@@ -2300,7 +2300,7 @@ bool Game::seWorktype(int actor) {
 			return true;
 		}
 		if (d <= 1 || _creatures.lineOfFire(actor, tx, ty, bestRange)) {
-			_combat.attackWith(actor, t, _world.objects[best].type, false);
+			_combat.seAttack(actor, _world.objects[best].type, tx, ty, false, t);
 			_world.spendMoves(actor, 10);
 			return true;
 		}
@@ -2352,7 +2352,7 @@ bool Game::seWorktype(int actor) {
 		bool move = true;
 		if (d <= range) {
 			if (d <= 1 || _creatures.lineOfFire(actor, tx, ty, range)) {
-				_combat.attackWith(actor, best, weapon, false);
+				_combat.seAttack(actor, weapon, tx, ty, false, best);
 				_world.spendMoves(actor, 10);
 				move = false;
 			} else if (seRoll(0, 1)) {
@@ -2384,7 +2384,7 @@ bool Game::seWorktype(int actor) {
 		if (weapon == 0x89 || weapon == 0x8A || weapon == 0xF0 || weapon == 0xF1) {
 			int t = _creatures.targetFor(actor);
 			if (t >= 0) {
-				_combat.attackWith(actor, t, weapon, false);
+				_combat.seAttack(actor, weapon, _world.objects[_world.actorObject(t)].x, _world.objects[_world.actorObject(t)].y, false, t);
 				_world.spendMoves(actor, 10);
 				return true;
 			}
@@ -2402,7 +2402,7 @@ bool Game::seWorktype(int actor) {
 				int ts = al.status[a] & 0x60;
 				if (ts == side || !ts)
 					continue;
-				_combat.attackWith(actor, a, weapon, false);
+				_combat.seAttack(actor, weapon, tx, ty, false, a);
 				_world.spendMoves(actor, 10);
 				return true;
 			}
@@ -3472,6 +3472,58 @@ void Game::seLightLevel(bool lit) {
 	if (light < 2 && (lit || (_world.actors.globals.size() > 0x12 && _world.actors.globals[0x12])))
 		light = 2;
 	_seLight = light;
+}
+
+} // namespace Ultima6
+} // namespace Ultima6
+
+namespace Ultima6 {
+namespace Ultima6 {
+
+// the Attack command's target and blow (sub_2B9E7 with attack_with_weapon, Combat::seAttack): a person or thing on the square is named ("pass." for oneself); an empty square is "nothing!" when it
+// is not to be seen (black), else the name of its ground; then a line, and the blow: "Out of range!" (with the tone 0x1C) when it is too far, "Not possible." when the weapon does nothing to what
+// is there (a web without fire, a tree without the fire axe)
+void Game::seAttackCommand(int attacker, int weapon, int tx, int ty) {
+	int ka = _world.actorObject(attacker);
+	if (ka < 0)
+		return;
+	const World::Obj &me = _world.objects[ka];
+	int victim = -1;
+	int tobj = _combat.seTargetObject(attacker, tx, ty, victim);
+	if (me.x == tx && me.y == ty) {
+		message("pass.\n");
+		return;
+	}
+	if (victim >= 0) {
+		message(_combat.nameOf(victim) + ".\n");
+	} else if (tobj >= 0) {
+		message(Describe::object(_world, _world.objects[tobj]) + ".\n");
+	} else {
+		ViewGrid view;
+		ViewBuilder builder(_world);
+		builder.build(x, y, z, _seLight, view);
+		int cx = tx - x + 5, cy = ty - y + 5;
+		bool dark = cx < 0 || cx > 10 || cy < 0 || cy > 10 || view.tile[cy][cx] == ViewGrid::UNSEEN || view.tile[cy][cx] == ViewGrid::DARK;
+		if (dark) {
+			message("nothing!\n");
+		} else {
+			int mask = z == 0 ? 0x3FF : 0xFF;
+			message(Describe::tileName(_world, _world.map.tile(z, tx & mask, ty & mask), false) + ".\n");
+		}
+	}
+	message("\n");
+	if (victim >= 0 && attacker != victim) { // the attacker turns to the one it strikes
+		int tk = _world.actorObject(victim);
+		int fx = _world.objects[tk].x - me.x, fy = _world.objects[tk].y - me.y;
+		_actors.face(attacker, std::abs(fx) > std::abs(fy) ? (fx < 0 ? 6 : 2) : (fy < 0 ? 0 : 4));
+	}
+	int rc = _combat.seAttack(attacker, weapon, tx, ty, true);
+	if (rc == 2) {
+		message("Out of range!\n");
+		sfx(0x1C);
+	} else if (rc == 3) {
+		message("Not possible.\n");
+	}
 }
 
 } // namespace Ultima6
