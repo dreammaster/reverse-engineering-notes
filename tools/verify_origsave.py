@@ -3,6 +3,7 @@
 moment of the save (tools/make_orig_save.py).   python3 tools/verify_origsave.py [LEVEL] [WALK]"""
 import json, os, re, subprocess, sys, tempfile
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+GAME = os.environ.get('GAME', 'cadaver1')
 LV = sys.argv[1] if len(sys.argv) > 1 else '1'; walk = sys.argv[2] if len(sys.argv) > 2 else ''
 d = tempfile.mkdtemp()
 r = subprocess.run([sys.executable, ROOT + '/tools/make_orig_save.py', d + '/cadaver.sav', LV, walk], capture_output=True, text=True)
@@ -10,7 +11,7 @@ m = re.search(r'STATE (.*)', r.stdout)
 if not m: sys.exit('make_orig_save failed: ' + r.stdout + r.stderr)
 st = json.loads(m[1])
 env = dict(os.environ, SDL_VIDEODRIVER='dummy', SDL_AUDIODRIVER='dummy', CAD_DUMPBOX='1')
-out = subprocess.run([ROOT + '/build/cadaver', '-g', ROOT + '/cadaver1', '--scene', 'walk', '--level', '1', '--room', '0', '--sim', 'wait:4,load:0,wait:30,dump:0', '--screenshot', d + '/x.bmp'], env=env, capture_output=True, text=True, cwd=d).stderr
+out = subprocess.run([ROOT + '/build/cadaver', '-g', ROOT + '/' + GAME, '--scene', 'walk', '--level', '1', '--room', '0', '--sim', 'wait:4,load:0,wait:30,dump:0', '--screenshot', d + '/x.bmp'] + (['--tata'] if GAME == 'cadaver2' else []), env=env, capture_output=True, text=True, cwd=d).stderr
 dm = re.findall(r'DUMP (-?\d+) (-?\d+) (-?\d+) (-?\d+)', out)[-1]
 port = {'player': [int(dm[0]), int(dm[1]), int(dm[2])], 'room': int(dm[3])}
 objs = sorted(tuple(int(v) & 0xFF for v in m.groups()[1:7]) for m in re.finditer(r'OBJ (\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (\d+)', out) if int(m.group(8)) != 3)

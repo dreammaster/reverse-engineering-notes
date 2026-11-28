@@ -22,7 +22,8 @@ static size_t section(const uint8_t *d, size_t n, size_t p, int count, const uin
 
 int origsave_parse(OrigSave *o, uint8_t *d, size_t n) {
 	memset(o, 0, sizeof(*o));
-	if (n < 8 + ORIGSAVE_BLOCK_LEN || memcmp(d, "mjm0DAC", 7)) return -1;
+	if (n < 8 + ORIGSAVE_BLOCK_LEN || memcmp(d, "mjm0", 4) || (d[4] != 'D' && d[4] != 'T') || memcmp(d + 5, "AC", 2)) return -1;
+	o->tata = d[4] == 'T';                                   /* "mjm0DAC": the DATA levels, "mjm0TAC": the Payoff's TATA levels */
 	o->level = d[7] + 1;
 	const uint8_t *rp[ORIGSAVE_THINGS];
 	int rl[ORIGSAVE_THINGS];

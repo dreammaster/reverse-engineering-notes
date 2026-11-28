@@ -1,7 +1,7 @@
 /*
  * origsave.h - reading a save file written by the original game (1000:C057, docs/formats.md "The original's save file").
  *
- * Layout: 8 bytes "mjm0DAC" + level - 1; then the sections 3 (rooms), 4 (doors), 5 (per-room thing lists), 8 (carried list) and 6 (things): u16 length, the records back to back, an index of
+ * Layout: 8 bytes "mjm0DAC" (TATA levels: "mjm0TAC") + level - 1; then the sections 3 (rooms), 4 (doors), 5 (per-room thing lists), 8 (carried list) and 6 (things): u16 length, the records back to back, an index of
  * {u16 record length, u16 offset} per record (100, 400, 100, n carried, 1000 entries); then the data-segment block ds:020C .. 06F7 (1260 bytes).  The records of sections 3, 4 and 6 are
  * the same records as the level files' (MP2 sections 0, 1 and 3) in their run-time state, so a loaded game is the level plus these records instead of the file's.
  */
@@ -22,6 +22,7 @@ typedef struct {
 	uint8_t *buf;                                   /* the whole file (owned) */
 	size_t n;
 	int level;                                      /* 1..5 */
+	int tata;                                       /* the header says TAC: a level of the Payoff's own set */
 	struct { const uint8_t *p; int len; } room[ORIGSAVE_ROOMS], door[ORIGSAVE_DOORS], thing[ORIGSAVE_THINGS];
 	const uint8_t *block;                           /* ds:020C .. 06F7 */
 } OrigSave;

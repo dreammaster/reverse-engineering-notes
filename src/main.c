@@ -2005,12 +2005,13 @@ static int game_load(RoomView *rv, int slot) {
 	{                                                                  /* a save file written by the original game (docs/formats.md): the same records, a different container */
 		uint8_t *raw = malloc((size_t)n > 0 ? (size_t)n : 1);
 		OrigSave os;
-		if (raw && n >= 8 && fread(raw, 1, (size_t)n, f) == (size_t)n && !memcmp(raw, "mjm0DAC", 7) && origsave_parse(&os, raw, (size_t)n) == 0) {
+		if (raw && n >= 8 && fread(raw, 1, (size_t)n, f) == (size_t)n && !memcmp(raw, "mjm0", 4) && origsave_parse(&os, raw, (size_t)n) == 0) {
 			fclose(f);
 			origsave_free(&g_orig); g_orig = os; g_orig_set = 1;
 			free(g_sav); g_sav = NULL;
 			roomview_unload(rv);
 			rv->level = os.level; rv->room = (int)origsave_w(&os, 0x232);
+			if (g_payoff) rv->use_tata = os.tata;                      /* the Payoff: DATA or TATA levels as the file says */
 			rv->restarting = 1; rv->dead_timer = 0;
 			g_walk.world_key = 0; g_walk.placed = 0;
 			return 0;
