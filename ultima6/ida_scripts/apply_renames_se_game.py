@@ -131,6 +131,9 @@ FUNCTIONS = [
     (0x285E0, "defence_value", '= Martian Dreams 18286 (matched by instruction signature)'),
     (0x1E5F3, "slot_class_by_type", 'where a thing is worn, by its type: neck 1, body 4, two-handed 8, shield 5, one hand 2, else -1'),
     (0x1F404, "cmd_ready", 'Ready: the slot class, the modern weapons for the four who know them, the hands, one of a stack'),
+    (0x2AF13, "hit_roll", 'the hit test: a roll of 1-30 against half the difference of the defender and the attacker'),
+    (0x2B234, "strike", 'a blow lands: the damage rolled, the armour, grazed, hurt_target, poison'),
+    (0x2B042, "target_answers", 'what a person that was struck does in answer'),
     # -- matched by instruction signature (tools/match_functions.py) --
     (0x27169, "request_talk", '= Martian Dreams 29C22 (matched by instruction signature)'),
     (0x101AF, "__restorezero", '= Ultima VI 101B0 (matched by instruction signature)'),

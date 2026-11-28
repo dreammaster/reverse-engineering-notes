@@ -1,6 +1,7 @@
 // Savage Empire's Use (cmd_use = sub_35E46): the table of 80 types, "Not possible." for the rest, drinking, eating, the crate that opens and gives up what is in it, the torch that is lit.
 // Skipped without the game data.
 
+#include "ultima6/combat.h"
 #include "ultima6/session.h"
 
 #include <cstdio>
@@ -991,6 +992,41 @@ int main() {
 		g.handleKey(KEY_ESC);
 		CHECK(readied == 1 && left == 2);
 		(void)spears;
+	}
+
+	// the spear of Shamap (type 1) kills what it hits and is a plain spear (0x1A) after; the blowgun's dart poisons one time in two (attack_with_weapon)
+	{
+		using ::Ultima6::Ultima6::Combat;
+		BorlandRandom rng(11);
+		::Ultima6::Ultima6::TextWindow scroll(22, 14, 17, 10);
+		Combat c(w, rng, scroll);
+		int fk = w.actorFree(0xC2) ? w.addActor(0xC2, 0x182, px + 1, py, 0) : -1;
+		CHECK(fk >= 0);
+		if (fk >= 0) {
+			int who = w.actors.partyRoster[0];
+			w.actors.hp[0xC2] = 200;
+			w.actors.status[0xC2] = 0;
+			std::vector<int> pack;
+			w.inventory(who, pack, false);
+			for (int i : pack)
+				w.deleteObject(i);
+			int spear = w.addToInventory(who, 1, 0, 1);
+			w.objects[spear].status = (uint8_t)((w.objects[spear].status & ~ObjRecord::LOCATION_MASK) | ObjRecord::READIED);
+			for (int i = 0; i < 400 && !w.objects[spear].deleted && w.objects[spear].type == 1; ++i)
+				c.attackWith(who, 0xC2, 1, false);
+			CHECK(w.objects[spear].type == 0x1A && w.actors.hp[0xC2] == 0);
+			w.moveObject(fk, px + 1, py, 0);
+			w.actors.hp[0xC2] = 200;
+			w.actors.status[0xC2] = 0;
+			w.actors.status[0xC2] &= (uint8_t)~0x10;
+			bool poisoned = false;
+			for (int i = 0; i < 60 && !poisoned; ++i) {
+				c.attackWith(who, 0xC2, 0x20, false);
+				poisoned = (w.actors.status[0xC2] & 8) != 0;
+			}
+			CHECK(poisoned);
+			w.deleteObject(fk);
+		}
 	}
 
 	// Rest (sub_3A28B): "Rest until ...", N and a digit of hours; a member whose experience asks for the next level dreams of the three animals and B raises his strength

@@ -205,6 +205,14 @@ int Combat::adjustedStrength(int actor) const {
 			v += 3;
 		return v < 1 ? 1 : v > 0x1E ? 0x1E : v;
 	}
+	if (_world.game == GameId::SavageEmpire) { // adjusted_strength (sub_285A0): 3 less (not below 1) with the object status bit 0x40, and then, only then, 3 more (not above 30) with 0x80
+		if (k >= 0 && (_world.objects[k].status & 0x40)) {
+			v = v - 3 < 1 ? 1 : v - 3;
+			if (_world.objects[k].status & 0x80)
+				v = v + 3 > 0x1E ? 0x1E : v + 3;
+		}
+		return v;
+	}
 	if (k >= 0 && (_world.objects[k].status & 0x40)) // cursed
 		v = v - 3 < 1 ? 1 : v - 3;
 	return v;
@@ -217,7 +225,7 @@ int Combat::adjustedDexterity(int actor) const {
 	int v = _world.actors.dexterity[actor];
 	if (k >= 0 && (_world.objects[k].status & 0x40))
 		v = v - 3 < 1 ? 1 : v - 3;
-	if (_world.game == GameId::MartianDreams && k >= 0 && (_world.objects[k].status & 0x80)) // sub_18286: 3 more with the bit 0x80 of the object status, not above 30
+	if (_world.game != GameId::Ultima6 && k >= 0 && (_world.objects[k].status & 0x80)) // sub_18286 and defence_value (sub_285E0): 3 more with the bit 0x80 of the object status, not above 30
 		v = v + 3 > 0x1E ? 0x1E : v + 3;
 	if (_world.actors.status[actor] & 0x04) // asleep
 		v = 1;
@@ -243,14 +251,23 @@ bool Combat::hitCheck(int attacker, int defender, int weapon) {
 	int ka = _world.actorObject(attacker), kd = _world.actorObject(defender);
 	if (ka < 0 || kd < 0)
 		return false;
-	if (weapon == 48) // the glass sword never misses
+	const bool u6 = _world.game == GameId::Ultima6, se = _world.game == GameId::SavageEmpire;
+	if (u6 && weapon == 48) // the glass sword never misses
 		return true;
 	const CreatureStats *own = stats(_world.objects[ka].type);
-	bool useStrength = weapon == 4 || weapon == 34 || weapon == 39 || weapon == 44; // spiked helm, club, mace, two-handed hammer
-	if (own && weapon == _world.objects[ka].type && (_world.game != GameId::Ultima6 ? (MovementClasses::flags(MovementClasses::classOf(weapon)) & 0x20) != 0 : (own->flags & CreatureStats::STRENGTH_BASED))) // Martian Dreams' class flag 0x20 (sub_1A0E5)
+	const int foeType = _world.objects[kd].type;
+	if (se && weapon == 0x15 && (foeType == 0x143 || foeType == 0x148)) // sub_2AF13: the weapon 0x15 against these kinds misses one time in eight
+		return roll(0, 7) != 0;
+	bool useStrength = false;
+	if (u6) {
+		useStrength = weapon == 4 || weapon == 34 || weapon == 39 || weapon == 44; // spiked helm, club, mace, two-handed hammer
+	} else if (se) { // the weapons that are swung (sub_2AF13): 0x18, 0x1D, 0x22, 0x76, 0x21, 0x77, 0x5E
+		useStrength = weapon == 0x18 || weapon == 0x1D || weapon == 0x22 || weapon == 0x76 || weapon == 0x21 || weapon == 0x77 || weapon == 0x5E;
+	}
+	if (own && weapon == _world.objects[ka].type && (!u6 ? (MovementClasses::flags(MovementClasses::classOf(weapon)) & 0x20) != 0 : (own->flags & CreatureStats::STRENGTH_BASED))) // the class flag 0x20 (sub_1A0E5, sub_2AF13): a creature's own blow
 		useStrength = true;
 	int atk = useStrength ? adjustedStrength(attacker) : adjustedDexterity(attacker);
-	int foeDex = adjustedDexterity(defender);
+	int foeDex = se && (foeType == 0x143 || foeType == 0x148) ? 20 : adjustedDexterity(defender);
 	return roll(1, 30) >= (foeDex + 30 - atk) / 2; // a roll below half the difference misses
 }
 
@@ -471,7 +488,8 @@ bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) 
 		int ammo = _world.game == GameId::MartianDreams ? mdAmmo(weapon) : _world.game == GameId::SavageEmpire ? seAmmo(weapon) : (weapon == 0x29 || weapon == 0x36) ? 0x37 : (weapon == 0x2A || weapon == 0x32) ? 0x38 : 0;
 		if (ammo)
 			_world.removeFromInventory(attacker, ammo, 0, _world.game == GameId::Ultima6 && weapon == 0x32 ? 3 : 1);
-		if (weapon == 0x24 || weapon == 0x25 || weapon == 0x26) {
+		const bool u6 = _world.game == GameId::Ultima6;
+		if (u6 && (weapon == 0x24 || weapon == 0x25 || weapon == 0x26)) {
 			if (std::abs(tx - ax) > 1 || std::abs(ty - ay) > 1) {
 				int thrown = find(weapon, true);
 				if (thrown >= 0) {
@@ -497,7 +515,7 @@ bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) 
 					}
 				}
 			}
-		} else if (weapon == 0x53) {
+		} else if (u6 && weapon == 0x53) {
 			_world.removeFromInventory(attacker, 0x53, 0, 1);
 			uint8_t f1 = _world.flags.flags1[_world.map.tile(az, landX, landY) & (TileFlags::TILES - 1)];
 			if (!(f1 & 1)) {
@@ -515,9 +533,9 @@ bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) 
 				_world.objects.push_back(fire);
 				_world.addToMap((int)_world.objects.size() - 1);
 			}
-		} else if (weapon == 0x5B) {
+		} else if (u6 && weapon == 0x5B) {
 			_world.removeFromInventory(attacker, 0x5B, 0, 1);
-		} else if (weapon == 0x4F || weapon == 0x50) {
+		} else if (u6 && (weapon == 0x4F || weapon == 0x50)) {
 			if (roll(1, 100) == 0x25) {
 				int wand = find(weapon, false);
 				if (wand >= 0)
@@ -546,11 +564,33 @@ bool Combat::attackWith(int attacker, int defender, int weapon, bool commanded) 
 	bool killed = false;
 	if (victim != attacker) {
 		int cls = MovementClasses::classOf(_world.objects[kv].type);
-		if (cls >= 0 && (MovementClasses::flags(cls) & 0x80) && weapon != 0x30 && weapon != 0x32 && weapon != 0x36)
+		const bool u6 = _world.game == GameId::Ultima6;
+		if (u6 && cls >= 0 && (MovementClasses::flags(cls) & 0x80) && weapon != 0x30 && weapon != 0x32 && weapon != 0x36)
 			maxDamage = (maxDamage + 1) >> 1;
-		if (weapon != 0x5B)
+		if (_world.game == GameId::SavageEmpire && weapon == 1) { // the spear of Shamap (attack_with_weapon): it kills what it hits (a 0x126 only falls asleep) and is a plain spear (0x1A) afterwards
+			std::vector<int> held;
+			_world.inventory(attacker, held, false);
+			for (int i : held)
+				if (_world.objects[i].type == 1 && _world.objects[i].location() == ObjRecord::READIED) {
+					_world.objects[i].type = 0x1A;
+					_world.objects[i].frame = 0;
+					_world.objects[i].quantity = 1;
+					break;
+				}
+			if (_world.objects[kv].type == 0x126) {
+				_world.actors.status[victim] |= 0x04;
+				return false;
+			}
+			return applyDamage(attacker, victim, _world.actors.hp[victim]);
+		}
+		if (_world.game == GameId::SavageEmpire && weapon == 0x20 && roll(0, 1) != 0 && !(_world.actors.status[victim] & 1)) { // the blowgun's poisoned dart: it poisons one time in two (not the protected)
+			_scroll.print(nameOf(victim) + " poisoned!\n");
+			_world.actors.status[victim] |= 0x08;
+			return false;
+		}
+		if (!u6 || weapon != 0x5B)
 			killed = strike(attacker, victim, maxDamage, commanded);
-		if (weapon == 0x30) {
+		if (u6 && weapon == 0x30) {
 			_scroll.print("Thy sword hath shattered!\n");
 			std::vector<int> held;
 			_world.inventory(attacker, held, false);
@@ -576,7 +616,8 @@ bool Combat::strike(int attacker, int target, int damage, bool commanded) {
 	if (kt < 0 || ka < 0)
 		return false;
 	std::string name = nameOf(target);
-	if (_world.objects[ka].type == 0x165 && _world.objects[ka].frame == 0)
+	const bool u6 = _world.game == GameId::Ultima6; // the effects below are Ultima VI's (the spin-offs' own strike is sub_2B234 / sub_1A45C: armour, grazed, poison)
+	if (u6 && _world.objects[ka].type == 0x165 && _world.objects[ka].frame == 0)
 		_world.objects[ka].frame = 1;
 	if (damage == -1)
 		damage = 1;
@@ -604,7 +645,7 @@ bool Combat::strike(int attacker, int target, int damage, bool commanded) {
 	if (target >= 0x100)
 		return killed;
 	// sub_2CC0E: a person on no side, not of the party, answers a blow of the one who is steering
-	if (commanded && !(a.status[target] & 0xE0)) {
+	if (u6 && commanded && !(a.status[target] & 0xE0)) {
 		int cls = MovementClasses::classOf(_world.objects[kt].type);
 		if (a.worktype[attacker] == 2 && cls >= 0 && (MovementClasses::flags(cls) & 0x4000) && damage > 0) {
 			_scroll.print(name + " yells for help!\n");
@@ -644,13 +685,13 @@ bool Combat::strike(int attacker, int target, int damage, bool commanded) {
 		}
 		return found;
 	};
-	if (cls == 8) {
+	if (u6 && cls == 8) {
 		if (onSfx)
 			onSfx(9, 0);
 		_scroll.print(name + " dragged under!\n");
 		a.movementFlags[target] |= 0x10;
 	}
-	if (cls == 0) {
+	if (u6 && cls == 0) {
 		int item = pick(0);
 		if (item >= 0) {
 			if (onSfx)
@@ -659,7 +700,7 @@ bool Combat::strike(int attacker, int target, int damage, bool commanded) {
 			_world.deleteObject(item);
 		}
 	}
-	if (cls == 0x17) {
+	if (u6 && cls == 0x17) {
 		int item = pick(1);
 		if (item >= 0) {
 			if (onSfx)
@@ -668,7 +709,7 @@ bool Combat::strike(int attacker, int target, int damage, bool commanded) {
 			_world.deleteObject(item);
 		}
 	}
-	if (cls >= 0 && (MovementClasses::flags(cls) & 0x40) && roll(0, 3) == 0) {
+	if (cls >= 0 && (MovementClasses::flags(cls) & 0x40) && roll(0, 3) == 0 && (u6 || !(a.status[target] & 1))) {
 		_scroll.print(name + " poisoned!\n");
 		a.status[target] |= 0x08;
 	}
