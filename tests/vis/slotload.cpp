@@ -15,6 +15,9 @@
 #include "TSceneActionArea.h"
 #include "vsplayer/control/masterControl.h"
 #include "TGCharacter.h"
+#include "TGInterface.h"
+#include "TMButton.h"
+#include "vstables/records.h"
 #include "TMSavegame.h"
 #include "graphicslib/graphics.h"
 #include "vstables/fieldIds.h"
@@ -301,6 +304,120 @@ int main(int argc, char **argv) {
 				std::printf("\n");
 			}
 		}
+		return 0;
+	}
+
+	if (argc > 3 && std::string(argv[3]) == "scripts") {
+		// scripts: slotload <b|s> <slot> scripts <text>...: the scripts of the game (name, type, size), and the lines of their
+		// source that have one of the texts, with the line number
+		TVList scriptLinks;
+
+		TVisObjRef(control->GetVisionaire()->GetGame()).GetLinks(kGameScriptLinks, TypeOrder::kValue1, scriptLinks);
+
+		for (TVisionaireObject *object : scriptLinks) {
+			wxString text = object->GetStr(kScriptScript);
+			std::string source((const char *)text.mb_str());
+
+			// (the data keeps the line ends of the scripts as <br/>)
+			for (size_t found = source.find("<br/>"); found != std::string::npos; found = source.find("<br/>", found))
+				source.replace(found, 5, "\n");
+
+			std::printf("script '%ls' type %d size %d\n", object->GetName().c_str().c_str(), object->GetInt(kScriptType), (int)source.size());
+
+			size_t at = 0;
+			int lineNumber = 1;
+
+			while (at <= source.size()) {
+				size_t end = source.find('\n', at);
+				std::string line = source.substr(at, end == std::string::npos ? std::string::npos : end - at);
+
+				for (int i = 4; i < argc; i++) {
+					if (line.find(argv[i]) != std::string::npos)
+						std::printf("   %d: %s\n", lineNumber, line.c_str());
+				}
+
+				if (end == std::string::npos)
+					break;
+
+				at = end + 1;
+				lineNumber++;
+			}
+		}
+
+		return 0;
+	}
+
+	if (argc > 3 && std::string(argv[3]) == "iface") {
+		// interfaces: slotload <b|s> <slot> iface <id> [<id>...]: the interfaces of the current character are printed, then each action
+		// (table 7) of the arguments is started in turn, the game runs for 3 seconds after each and the interfaces are printed again
+		TGCharacter *rufus = control->GetCurrentCharacter();
+		auto print = [&](const char *label) {
+			std::printf("%s\n", label);
+
+			for (TGInterface *face : rufus->GetInterfaces()) {
+				int active = 0;
+				int shown = 0;
+
+				for (TMButton *button : face->_buttons) {
+					if (button->IsActive())
+						active++;
+
+					if (button->GetRef().GetInt(kButtonType) == 0 && button->IsActive())
+						shown++;
+				}
+
+				// ICONDS=1: every button of the interface with its condition (name, negated, true now)
+				if (std::getenv("ICONDS") && std::wstring(face->_ref.GetName().c_str().c_str()) == L"Inventory") {
+					for (TMButton *button : face->_buttons) {
+						TVisObjRef condRef = button->GetRef().GetLink(kButtonCondition);
+						TTCondition condition(condRef);
+
+						std::printf("      button '%ls' type %d active %d condition '%ls' negate %d now %d\n", button->GetRef().GetName().c_str().c_str(),
+						            button->GetRef().GetInt(kButtonType), button->IsActive() ? 1 : 0, condRef.GetName().c_str().c_str(),
+						            button->GetRef().GetBool(kButtonConditionNegate) ? 1 : 0, condition.IsTrue() ? 1 : 0);
+					}
+				}
+
+				std::printf("   interface '%ls' active %d visible %d alpha %.2f target %.2f visibility %d dest %d buttons %d active %d placeholders %d items %d scroll %d bg %dx%d\n",
+				            face->_ref.GetName().c_str().c_str(), face->IsActive() ? 1 : 0, face->_ref.GetBool(kInterfaceVisible) ? 1 : 0,
+				            face->_alpha, face->_alphaTarget, face->_ref.GetInt(kInterfaceVisibility), face->_ref.GetInt(kInterfaceDestVisibility),
+				            (int)face->_buttons.size(), active, shown, (int)face->_items.size(),
+				            face->_ref.GetInt(kInterfaceItemsScrollPosition), face->_background.GetWidth(), face->_background.GetHeight());
+			}
+		};
+
+		print("loaded");
+
+		for (int i = 4; i < argc; i++) {
+			TVList actions;
+
+			control->GetVisionaire()->GetList(7, actions, false);
+
+			// `wheelup`/`wheeldown`: the actions the game gives to the mouse wheel (the game record's links 0x2FF and 0x300)
+			if (std::string(argv[i]) == "wheelup" || std::string(argv[i]) == "wheeldown") {
+				TVisObjRef link = TVisObjRef(control->GetVisionaire()->GetGame()).GetLink(std::string(argv[i]) == "wheelup" ? 0x2FF : 0x300);
+
+				std::printf("%s: action '%ls' (id %d)\n", argv[i], link.GetName().c_str().c_str(), link.IsEmpty() ? 0 : PackVisId(link.GetId()));
+
+				if (!link.IsEmpty())
+					TGAction::AddRunningAction(link);
+			}
+
+			for (TVisionaireObject *action : actions) {
+				if (action->GetId24() == atoi(argv[i])) {
+					std::printf("starting action %s\n", argv[i]);
+					TGAction::AddRunningAction(TVisObjRef(action));
+				}
+			}
+
+			for (int step = 0; step < 150; step++) {
+				std::this_thread::sleep_for(std::chrono::milliseconds(20));
+				control->Update();
+			}
+
+			print("after");
+		}
+
 		return 0;
 	}
 

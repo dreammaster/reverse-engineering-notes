@@ -10,6 +10,7 @@
 
 #include "AppGlobals.h"
 #include "TGAction.h"
+#include "TMSavegame.h"
 #include "TSpriteHandle.h"
 #include "datastruct/vlist.h"
 #include "vsplayer/control/gameControl.h"
@@ -30,7 +31,7 @@ TSdlGraphics::TSdlGraphics(const TGraphicsStartup &startup) : _startup(startup) 
 		}
 	}
 
-	// DEPONIA_CLICKS=<frame>:<x>:<y>[:<button>];...
+	// DEPONIA_CLICKS=<frame>:<x>:<y>[:<button>];... (the button 4 turns the wheel up, 5 down)
 	if (const char *clicks = std::getenv("DEPONIA_CLICKS")) {
 		std::string text(clicks);
 		size_t at = 0;
@@ -50,7 +51,7 @@ TSdlGraphics::TSdlGraphics(const TGraphicsStartup &startup) : _startup(startup) 
 		}
 	}
 
-	// DEPONIA_ACTIONS=<frame>:<id of the action (table 7)>;...
+	// DEPONIA_ACTIONS=<frame>:<id of the action (table 7)>;... (an id below 0 loads the savegame of the slot -id - 1)
 	if (const char *actions = std::getenv("DEPONIA_ACTIONS")) {
 		std::string text(actions);
 		size_t at = 0;
@@ -506,6 +507,15 @@ void TSdlGraphics::PushClicks() {
 		if (action.first != _shown)
 			continue;
 
+		// a negative id is the savegame of the slot -id - 1, loaded as the menu does in a running game
+		if (action.second < 0) {
+			TMSavegame save(false, -action.second - 1, 0, 0, static_cast<TGameControl *>(g_pGameControl)->GetVisionaire());
+
+			save.CheckVisPaths();
+			static_cast<TGameControl *>(g_pGameControl)->LoadGame(&save);
+			continue;
+		}
+
 		TVList actions;
 
 		g_traceFlags |= 0xFF;
@@ -533,6 +543,15 @@ void TSdlGraphics::PushClicks() {
 		event.motion.x = x;
 		event.motion.y = y;
 		SDL_PushEvent(&event);
+
+		// the buttons 4 and 5 are the wheel turned up and down
+		if (click.button == 4 || click.button == 5) {
+			SDL_zero(event);
+			event.type = SDL_MOUSEWHEEL;
+			event.wheel.y = click.button == 4 ? 1 : -1;
+			SDL_PushEvent(&event);
+			continue;
+		}
 
 		for (int down = 1; down >= 0; down--) {
 			SDL_zero(event);

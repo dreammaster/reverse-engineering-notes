@@ -2835,6 +2835,18 @@ bool TGameControl::Load() {
 	_objectManager.SavedObjectChanged();
 	SetInterfaces();
 	TGAnimation::LoadAnimations();
+
+	// FIXME: only for Deponia 2, and not the original's behaviour as far as is known (its Load() has no such step, asm
+	// 476852-477029): a stand-in until the real difference is found (see this tree's VERSIONS.md, "OPEN: Deponia 2: the board of
+	// the inventory"). Without it the board of the inventory (bg_inventory) is missing the first time the inventory is opened after
+	// a load: the button got no animation (the game's own is preloaded there, and the old entry of it has no state any more when
+	// SetInterfaces() starts it), and nothing joins it to the one LoadAnimations() makes. Here the buttons take them up. Deponia 1
+	// is not given it: its show_inventory starts the animation again itself.
+	if (_visionaire->GetGame().GetStr(kGameGameName).Cmp(wxString(L"Deponia 2")) == 0) {
+		for (TGInterface *interface : _allInterfaces)
+			interface->ReattachAnimations();
+	}
+
 	LoadEventHandlers();
 	LoadGlobalScriptVariables(*_visionaireGame);
 
