@@ -806,6 +806,8 @@ bool Combat::applyDamage(int attacker, int defender, int damage) {
 		const char *word = " killed!\n";
 		if (_world.game == GameId::MartianDreams) // sub_19300: the people "fall", the living are "killed", the machines are "destroyed"
 			word = defender < 0x10 ? " falls!\n" : (MovementClasses::flags(MovementClasses::classOf(type)) & (0x4000 | 0x80)) ? " killed!\n" : " destroyed!\n";
+		if (_world.game == GameId::SavageEmpire && defender < 0x10) // kill_actor: the people of the story "fall", the rest are "killed"
+			word = " falls!\n";
 		_scroll.print(name + word);
 		return true;
 	}
