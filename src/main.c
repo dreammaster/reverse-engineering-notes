@@ -2059,6 +2059,8 @@ static void game_load_apply(RoomView *rv) {
 		for (int d = 0; d < ORIGSAVE_DOORS && d < rv->mp2.sec[1].count; d++) if (os->door[d].p && os->door[d].len >= 4) { rv->mp2.sec[1].rec[d] = os->door[d].p; rv->mp2.sec[1].len[d] = os->door[d].len; }
 		AclVM keep = rv->vm;
 		acl_init(&rv->vm, &rv->mp2);
+		for (int t = 0; t < ACL_THINGS && t < ORIGSAVE_THINGS; t++)      /* a thing that the game removed (op 02h: its record is freed, length 0 in the file) is gone */
+			if (os->thing[t].len == 0 && rv->mp2.sec[3].len[t] >= 16 && rv->vm.present[t]) rv->vm.flags[t] |= 0x80;
 		memcpy(rv->vm.size, keep.size, sizeof(keep.size));
 		rv->vm.rand_range = keep.rand_range; rv->vm.clone_ok = 1; rv->vm.sound = keep.sound; rv->vm.sound_stop = keep.sound_stop; rv->vm.user = keep.user;
 		rv->vm.energy_max = keep.energy_max;
@@ -2093,6 +2095,23 @@ static void game_load_apply(RoomView *rv) {
 	g_sav_place = 1;
 }
 
+/* a loaded game: the player's saved place (the original's save: the player record, facing by the last move key; the port's own: the saved place) replaces the default placement; called wherever
+   the world of a new room is built (the tick and the draw both can be first) */
+static void walker_apply_loaded(Walker *wk, RoomView *rv) {
+	if (g_orig_place) {
+		g_orig_place = 0;
+		wk->x1 = g_orig_x; wk->y1 = g_orig_y; wk->z = g_orig_z;
+		wk->dir = (g_orig_dir & 8) ? DIR_RIGHT : (g_orig_dir & 4) ? DIR_LEFT : (g_orig_dir & 2) ? DIR_DOWN : DIR_UP;
+		walker_world(wk, rv);
+	}
+	if (g_sav_place && g_sav) {
+		const SaveHead *h = (const SaveHead *)g_sav;
+		wk->x1 = h->x1; wk->y1 = h->y1; wk->z = h->z; wk->dir = h->dir;
+		free(g_sav); g_sav = NULL; g_sav_place = 0;
+		walker_world(wk, rv);
+	}
+}
+
 static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (rv->restarting) return;
 	roomview_tick(rv);
@@ -2114,18 +2133,7 @@ static void walker_tick(Walker *wk, RoomView *rv, int keys) {
 	if (wk->world_key != room_key(rv)) {
 		walker_world(wk, rv);
 		walker_place_default(wk, rv);
-		if (g_orig_place) {                                 /* a game loaded from the original's save: the player record's place, facing by the last move key */
-			g_orig_place = 0;
-			wk->x1 = g_orig_x; wk->y1 = g_orig_y; wk->z = g_orig_z;
-			wk->dir = (g_orig_dir & 8) ? DIR_RIGHT : (g_orig_dir & 4) ? DIR_LEFT : (g_orig_dir & 2) ? DIR_DOWN : DIR_UP;
-			walker_world(wk, rv);
-		}
-		if (g_sav_place && g_sav) {                         /* a loaded game: the saved place */
-			const SaveHead *h = (const SaveHead *)g_sav;
-			wk->x1 = h->x1; wk->y1 = h->y1; wk->z = h->z; wk->dir = h->dir;
-			free(g_sav); g_sav = NULL; g_sav_place = 0;
-			walker_world(wk, rv);
-		}
+		walker_apply_loaded(wk, rv);
 	}
 	if (rv->vm.go.pending) {
 		rv->vm.go.pending = 0;
@@ -2365,7 +2373,7 @@ static int walk_draw(RoomView *rv, const GameFiles *g, Screen *scr) {
 	if (rc != 0) return -1;
 	int w, h, gx, gy;
 	if (!roomview_geom(rv, &w, &h, &gx, &gy) || !g_walk.hdr8_ok) return 0;
-	if (g_walk.world_key != room_key(rv)) { walker_world(&g_walk, rv); walker_place_default(&g_walk, rv); }
+	if (g_walk.world_key != room_key(rv)) { walker_world(&g_walk, rv); walker_place_default(&g_walk, rv); walker_apply_loaded(&g_walk, rv); }
 	int px, py;
 	object_project(g_walk.x1, g_walk.y1, g_walk.z, g_walk.hdr8, gx, gy, &px, &py);
 	int f = g_walk.moving ? walk_frames[g_walk.dir][g_walk.grab_rev ? 3 - g_walk.anim : g_walk.anim] : idle_frame[g_walk.dir];
