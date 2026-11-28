@@ -4,6 +4,7 @@
 #include "ultima6/describe.h"
 #include "ultima6/game_tables.h"
 #include "ultima6/movement.h"
+#include "ultima6/stats_view.h"
 
 #include <algorithm>
 
@@ -796,13 +797,17 @@ bool Combat::applyDamage(int attacker, int defender, int damage) {
 	if (onHurt)
 		onHurt(defender);
 	// how badly hurt: the quarters of the maximum hit points
-	int most = std::max(1, std::min(255, a.level[defender] * 30));
+	int most = _world.game == GameId::Ultima6 ? std::max(1, std::min(255, a.level[defender] * 30)) : ActorStats::maxHealth(_world, defender); // (the spin-offs' maximum, sub_2872A for Savage Empire)
 	int quarter = (a.hp[defender] * 4) / most;
 	if (quarter < 4) {
 		std::string s = name + " "; // sub_2C97F: "`%s " then "critical!" or "heavily|lightly|barely wounded."
-		if (quarter == 0)
+		if (quarter == 0) {
 			s += "critical!\n";
-		else
+			int wt = a.worktype[defender];
+			// target_answers (sub_2B042): a person of some wits (an adjusted intelligence of 5 or more) near death flees (worktype 7) unless it is a fighter's own kind of worktype (6, 0xE, 2, 1, 0)
+			if (_world.game == GameId::SavageEmpire && adjustedIntelligence(defender) >= 5 && wt != 6 && wt != 0xE && wt != 2 && wt != 1 && wt != 0)
+				a.worktype[defender] = 7;
+		} else
 			s += std::string(quarter == 1 ? "heavily" : quarter == 2 ? "lightly" : "barely") + " wounded.\n";
 		_scroll.print(s);
 	}

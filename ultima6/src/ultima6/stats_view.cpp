@@ -20,6 +20,16 @@ int ActorStats::maxHealth(const World &w, int actor) {
 			return v == 0 ? 1 : v > 255 ? 255 : v;
 		}
 	}
+	if (w.game == GameId::SavageEmpire) { // max_hit_points (sub_2872A): twice the adjusted strength (3 less with the object status 0x40 and then 3 more with 0x80) and four for each level
+		int st = w.actors.strength[actor], k = w.actorObject(actor), os = k >= 0 ? w.objects[k].status : 0;
+		if (os & 0x40) {
+			st = st - 3 < 1 ? 1 : st - 3;
+			if (os & 0x80)
+				st = st + 3 > 30 ? 30 : st + 3;
+		}
+		int v = st * 2 + w.actors.level[actor] * 4;
+		return v == 0 ? 1 : v > 255 ? 255 : v;
+	}
 	int v = w.actors.level[actor] * 30;
 	if (v == 0)
 		v = 1;
